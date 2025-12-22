@@ -15,21 +15,14 @@ import styles from './settings-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
 import settingsIcon from './icon--settings.svg';
+import {BaseMenu} from './base-menu.jsx';
 
-class SettingsMenu extends React.Component {
+class SettingsMenu extends BaseMenu {
     constructor (props) {
         super(props);
 
-        bindAll(this, [
-            'handleOnClose',
-            'handleKeyPress',
-            'handleKeyPressOpenMenu',
-            'handleMove',
-            'handleOnOpen',
-            'setFocusedRef'
-        ]);
+        bindAll(this, ['handleKeyPress']);
         
-        this.settingsRef = React.createRef();
         this.state = {focusedIndex: -1};
         this.languageRef = React.createRef();
         this.themeRef = React.createRef();
@@ -37,75 +30,14 @@ class SettingsMenu extends React.Component {
         this.itemRefs = [this.languageRef, this.themeRef];
     }
 
-    componentDidUpdate (prevProps) {
-        if (!prevProps.settingsMenuOpen && this.props.settingsMenuOpen) {
-            this.setState({focusedIndex: 0}, () => {
-                this.setFocusedRef(this.itemRefs[0]);
-            });
-        }
-    }
-
     static contextType = MenuRefContext;
-
-    handleOnClose () {
-        this.context.removeByRef(this.settingsRef);
-        this.props.onRequestClose();
-        this.setState({focusedIndex: -1});
-    }
-
-    handleOnOpen () {
-        if (this.context.isOpenMenu(this.settingsRef)) return;
-
-        this.setState({focusedIndex: 0}, () => {
-            this.props.onRequestOpen();
-            this.context.addInner(this.settingsRef);
-            this.setFocusedRef(this.itemRefs[0]);
-        });
-    }
-
-    setFocusedRef (component) {
-        this.focusedRef = component;
-        if (this.focusedRef && this.focusedRef.current) {
-            this.focusedRef.current.focus();
-        }
-    }
 
     handleKeyPress (e) {
         if (e.key === 'Tab') {
             this.handleOnClose();
         }
 
-        if (this.context.isTopMenu(this.settingsRef)) {
-            this.handleKeyPressOpenMenu(e);
-        } else if (!this.context.isOpenMenu(this.settingsRef) && (e.key === ' ' || e.key === 'ArrowRight')) {
-            e.preventDefault();
-            this.handleOnOpen();
-        }
-    }
-
-    handleKeyPressOpenMenu (e) {
-        if (e.key === 'ArrowLeft' || e.key === 'Escape') {
-            e.preventDefault();
-            this.handleOnClose();
-        }
-
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            this.handleMove(-1);
-        }
-
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            this.handleMove(1);
-        }
-    }
-
-    handleMove (direction) {
-        const nextIndex =
-            (this.state.focusedIndex + direction + this.itemRefs.length) % this.itemRefs.length;
-        this.setState({focusedIndex: nextIndex}, () => {
-            this.setFocusedRef(this.itemRefs[nextIndex]);
-        });
+        super.handleKeyPress(e);
     }
 
     render () {
@@ -113,7 +45,6 @@ class SettingsMenu extends React.Component {
             canChangeLanguage,
             canChangeTheme,
             isRtl,
-            onRequestClose,
             settingsMenuOpen
         } = this.props;
 
@@ -142,16 +73,16 @@ class SettingsMenu extends React.Component {
                 className={menuBarStyles.menuBarMenu}
                 open={this.context.isOpenMenu(this.settingsRef)}
                 place={isRtl ? 'left' : 'right'}
-                onRequestClose={this.handleOnClose}
+                onClose={this.handleOnClose}
             >
                 <MenuSection>
                     {canChangeLanguage && <LanguageMenu
                         focusedRef={this.languageRef}
-                        onRequestCloseSettings={onRequestClose}
+                        depth={2}
                     />}
                     {canChangeTheme && <ThemeMenu
                         focusedRef={this.themeRef}
-                        onRequestCloseSettings={onRequestClose}
+                        depth={2}
                     />}
                 </MenuSection>
             </MenuBarMenu>
@@ -163,8 +94,8 @@ SettingsMenu.propTypes = {
     canChangeLanguage: PropTypes.bool,
     canChangeTheme: PropTypes.bool,
     isRtl: PropTypes.bool,
-    onRequestClose: PropTypes.func,
-    onRequestOpen: PropTypes.func,
+    onClose: PropTypes.func,
+    onOpen: PropTypes.func,
     settingsMenuOpen: PropTypes.bool
 };
 

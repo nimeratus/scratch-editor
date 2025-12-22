@@ -16,22 +16,17 @@ import {MenuRefContext} from '../context-menu/menu-path-context.jsx';
 import styles from './settings-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
+import {BaseMenu} from './base-menu';
 
-class LanguageMenu extends React.PureComponent {
+class LanguageMenu extends BaseMenu {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleKeyPress',
-            'handleKeyPressOpenMenu',
-            'handleMove',
-            'handleOnOpen',
-            'handleOnClose',
-            'setFocusedRef',
+            'onSelectItem',
             'setRef',
             'handleMouseOver'
         ]);
 
-        this.state = {focusedIndex: -1};
         this.itemRefs = Object.keys(locales).map(() => React.createRef());
     }
 
@@ -48,43 +43,9 @@ class LanguageMenu extends React.PureComponent {
         this.selectedRef = component;
     }
 
-    handleKeyPress (e) {
-        if (this.context.isTopMenu(this.props.focusedRef)) {
-            this.handleKeyPressOpenMenu(e);
-        } else if (!this.context.isOpenMenu(this.props.focusedRef) && (e.key === ' ' || e.key === 'ArrowRight')) {
-            e.preventDefault();
-            this.handleOnOpen();
-        }
-    }
-
-    handleKeyPressOpenMenu (e) {
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            this.handleMove(1);
-        }
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            this.handleMove(-1);
-        }
-
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            this.props.onChangeLanguage(Object.keys(locales)[this.state.focusedIndex]);
-            this.handleOnClose();
-        }
-
-        if (e.key === 'ArrowLeft' || e.key === 'Escape') {
-            e.preventDefault();
-            this.handleOnClose();
-        }
-    }
-
-    handleMove (move) {
-        const newIndex = (this.state.focusedIndex + move + this.itemRefs.length) % this.itemRefs.length;
-        this.setState({focusedIndex: newIndex}, () => {
-            const ref = this.itemRefs[this.state.focusedIndex];
-            if (ref && ref.current) ref.current.focus();
-        });
+    onSelectItem () {
+        this.props.onChangeLanguage(Object.keys(locales)[this.state.focusedIndex]);
+        this.context.clear();
     }
 
     handleMouseOver () {
@@ -92,32 +53,6 @@ class LanguageMenu extends React.PureComponent {
         if (!this.props.menuOpen && this.selectedRef) {
             this.selectedRef.scrollIntoView({block: 'center'});
             this.setFocusedRef(this.selectedRef);
-        }
-    }
-
-    handleOnOpen () {
-        if (this.context.isOpenMenu(this.props.focusedRef)) return;
-
-        this.props.onRequestOpen();
-        this.setState({focusedIndex: Object.keys(locales).indexOf(this.props.currentLocale)}, () => {
-            this.setFocusedRef(this.itemRefs[this.state.focusedIndex]);
-        });
-        
-        this.context.addInner(this.props.focusedRef);
-    }
-
-    handleOnClose () {
-        this.context.removeByRef(this.props.focusedRef);
-        this.setState({focusedIndex: -1}, () => {
-            this.setFocusedRef(this.props.focusedRef);
-        });
-        closeLanguageMenu();
-    }
-
-    setFocusedRef (component) {
-        this.focusedRef = component;
-        if (this.focusedRef && this.focusedRef.current) {
-            this.focusedRef.current.focus();
         }
     }
 
@@ -197,9 +132,8 @@ LanguageMenu.propTypes = {
     isRtl: PropTypes.bool,
     menuOpen: PropTypes.bool,
     onChangeLanguage: PropTypes.func,
-    onRequestCloseSettings: PropTypes.func,
-    onRequestOpen: PropTypes.func,
-    onRequestClose: PropTypes.func
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -209,13 +143,12 @@ const mapStateToProps = state => ({
     messagesByLocale: state.locales.messagesByLocale
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
     onChangeLanguage: locale => {
         dispatch(selectLocale(locale));
-        ownProps.onRequestCloseSettings();
     },
-    onRequestOpen: () => dispatch(openLanguageMenu()),
-    onRequestClose: () => dispatch(closeLanguageMenu())
+    onOpen: () => dispatch(openLanguageMenu()),
+    onClose: () => dispatch(closeLanguageMenu())
 });
 
 export default connect(

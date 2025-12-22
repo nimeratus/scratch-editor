@@ -16,6 +16,7 @@ import {MenuRefContext} from '../context-menu/menu-path-context.jsx';
 import styles from './settings-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
+import {BaseMenu} from './base-menu';
 
 const ThemeMenuItem = props => {
     const themeInfo = themeMap[props.theme];
@@ -48,20 +49,14 @@ ThemeMenuItem.propTypes = {
     onParentKeyPress: PropTypes.func
 };
 
-class ThemeMenu extends React.PureComponent {
+class ThemeMenu extends BaseMenu {
     constructor (props) {
         super(props);
         bindAll(this, [
-            'handleKeyPress',
-            'handleKeyPressOpenMenu',
-            'handleMove',
-            'handleOnOpen',
-            'handleOnClose',
-            'setFocusedRef',
-            'setRef'
+            'setRef',
+            'onSelectItem'
         ]);
 
-        this.state = {focusedIndex: -1};
         this.enabledThemes = [DEFAULT_THEME, HIGH_CONTRAST_THEME];
         this.itemRefs = this.enabledThemes.map(() => React.createRef());
     }
@@ -72,69 +67,9 @@ class ThemeMenu extends React.PureComponent {
         this.selectedRef = component;
     }
 
-    handleKeyPress (e) {
-        if (this.context.isTopMenu(this.props.focusedRef)) {
-            this.handleKeyPressOpenMenu(e);
-        } else if (!this.context.isOpenMenu(this.props.focusedRef) && (e.key === ' ' || e.key === 'ArrowRight')) {
-            e.preventDefault();
-            this.handleOnOpen();
-        }
-    }
-
-    handleKeyPressOpenMenu (e) {
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            this.handleMove(1);
-        }
-        if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            this.handleMove(-1);
-        }
-
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            this.props.onChangeTheme(this.enabledThemes[this.state.focusedIndex]);
-            this.handleOnClose();
-        }
-
-        if (e.key === 'ArrowLeft' || e.key === 'Escape') {
-            e.preventDefault();
-            this.handleOnClose();
-        }
-    }
-
-    handleMove (move) {
-        const newIndex = (this.state.focusedIndex + move + this.itemRefs.length) % this.itemRefs.length;
-        this.setState({focusedIndex: newIndex}, () => {
-            const ref = this.itemRefs[this.state.focusedIndex];
-            if (ref && ref.current) ref.current.focus();
-        });
-    }
-
-    handleOnOpen () {
-        if (this.context.isTopMenu(this.props.focusedRef)) return;
-
-        this.props.onRequestOpen();
-        this.setState({focusedIndex: 0}, () => {
-            this.setFocusedRef(this.itemRefs[this.state.focusedIndex]);
-        });
-
-        this.context.addInner(this.props.focusedRef);
-    }
-
-    handleOnClose () {
-        this.context.removeByRef(this.props.focusedRef);
-        this.setState({focusedIndex: -1}, () => {
-            this.setFocusedRef(this.props.focusedRef);
-        });
-        this.props.onRequestClose();
-    }
-
-    setFocusedRef (component) {
-        this.focusedRef = component;
-        if (this.focusedRef && this.focusedRef.current) {
-            this.focusedRef.current.focus();
-        }
+    onSelectItem () {
+        this.props.onChangeTheme(this.enabledThemes[this.state.focusedIndex]);
+        this.context.clear();
     }
 
     render () {
@@ -198,10 +133,8 @@ ThemeMenu.propTypes = {
     focusedRef: PropTypes.shape({current: PropTypes.instanceOf(Element)}),
     isRtl: PropTypes.bool,
     onChangeTheme: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
-    onRequestCloseSettings: PropTypes.func,
-    onRequestOpen: PropTypes.func,
-    onRequestClose: PropTypes.func,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
     theme: PropTypes.string
 };
 
@@ -210,14 +143,13 @@ const mapStateToProps = state => ({
     theme: state.scratchGui.theme.theme
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
     onChangeTheme: theme => {
         dispatch(setTheme(theme));
-        ownProps.onRequestCloseSettings();
         persistTheme(theme);
     },
-    onRequestOpen: () => dispatch(openThemeMenu()),
-    onRequestClose: () => dispatch(closeThemeMenu())
+    onOpen: () => dispatch(openThemeMenu()),
+    onClose: () => dispatch(closeThemeMenu())
 });
 
 export default connect(

@@ -9,66 +9,70 @@ export class MenuRefProvider extends React.Component {
         super(props);
 
         this.state = {
-            openRefs: []
+            refStack: []
         };
 
         bindAll(this, [
-            'addInner',
+            'push',
+            'pop',
+            'cut',
+            'clear',
             'isTopMenu',
-            'isOpenMenu',
-            'removeAll',
-            'removeByRef',
-            'removeInner'
+            'isOpenMenu'
         ]);
     }
 
-    isTopMenu (ref) {
-        const {openRefs} = this.state;
-        return openRefs.length > 0 && openRefs[openRefs.length - 1] === ref;
-    }
+    push (ref, depth) {
+        if (depth <= this.state.refStack.length) {
+            this.cut(this.state.refStack[depth - 1]);
+        }
 
-    isOpenMenu (ref) {
-        return this.state.openRefs.includes(ref);
-    }
-
-    addInner (ref) {
         this.setState(prev => ({
-            openRefs: [...prev.openRefs, ref]
+            refStack: [...prev.refStack, ref]
         }));
     }
 
-    removeByRef (ref) {
+    pop () {
+        this.setState(prev => ({
+            stack: prev.refStack.slice(0, prev.refStack.length - 1)
+        }));
+    }
+
+    cut (ref) {
         this.setState(prev => {
-            const refs = prev.openRefs;
+            const refs = prev.refStack;
             const index = refs.indexOf(ref);
 
-            if (index === -1) return {openRefs: refs};
+            if (index === -1) return {refStack: refs};
 
             return {
-                openRefs: refs.slice(0, index)
+                refStack: refs.slice(0, index)
             };
         });
     }
 
-    removeInner () {
-        this.setState(prev => ({
-            openRefs: prev.openRefs.slice(0, prev.openRefs.length - 1)
-        }));
+    clear () {
+        this.setState({refStack: []});
     }
 
-    removeAll () {
-        this.setState({openRefs: []});
+    isTopMenu (ref) {
+        const {refStack} = this.state;
+        return refStack.length > 0 && refStack[refStack.length - 1] === ref;
+    }
+
+    isOpenMenu (ref) {
+        return this.state.refStack.includes(ref);
     }
 
     render () {
         const value = {
-            openRefs: this.state.openRefs,
+            refStack: this.state.refStack,
+            push: this.push,
+            pop: this.pop,
+            cut: this.cut,
+            clear: this.clear,
             isTopMenu: this.isTopMenu,
-            isOpenMenu: this.isOpenMenu,
-            addInner: this.addInner,
-            removeInner: this.removeInner,
-            removeAll: this.removeAll,
-            removeByRef: this.removeByRef
+            isOpenMenu: this.isOpenMenu
         };
 
         return (
