@@ -148,7 +148,7 @@ GUI.propTypes = {
 };
 
 GUI.defaultProps = {
-    isTotallyNormal: true,
+    isTotallyNormal: false,
     onStorageInit: () => {},
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},

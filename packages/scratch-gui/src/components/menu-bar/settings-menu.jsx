@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import bindAll from 'lodash.bindall';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
@@ -19,8 +18,6 @@ import {BaseMenu} from './base-menu.jsx';
 class SettingsMenu extends BaseMenu {
     constructor (props) {
         super(props);
-
-        bindAll(this, []);
 
         this.languageRef = React.createRef();
         this.themeRef = React.createRef();

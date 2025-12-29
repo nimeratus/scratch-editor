@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './menu-bar.css';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import bindAll from 'lodash.bindall';
 
 import editIcon from './icon--edit.svg';
 import {FormattedMessage} from 'react-intl';
@@ -16,8 +15,6 @@ import TurboMode from '../../containers/turbo-mode.jsx';
 export class EditMenu extends BaseMenu {
     constructor (props) {
         super(props);
-
-        bindAll(this);
 
         this.restoreRef = React.createRef();
         this.turboRef = React.createRef();
@@ -62,6 +59,7 @@ export class EditMenu extends BaseMenu {
                             onClick={this.props.onRestoreOption(handleRestore)}
                             menuRef={this.restoreRef}
                             onParentKeyPress={this.handleKeyPressOpenMenu}
+                            isDisabled={!restorable}
                         >
                             {this.props.restoreOptionMessage(deletedItem)}
                         </MenuItem>

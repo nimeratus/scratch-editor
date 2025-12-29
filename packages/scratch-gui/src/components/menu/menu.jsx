@@ -63,6 +63,7 @@ const MenuItem = ({
     className,
     expanded = false,
     isSelected = false,
+    isDisabled = false,
     onClick,
     menuRef,
     ariaLabel,
@@ -81,6 +82,7 @@ const MenuItem = ({
         ref={menuRef}
         aria-label={ariaLabel}
         aria-selected={isSelected ?? null}
+        aria-disabled={isDisabled ?? null}
         role={ariaRole}
         onKeyDown={onParentKeyPress}
     >
@@ -96,6 +98,7 @@ MenuItem.propTypes = {
     className: PropTypes.string,
     expanded: PropTypes.bool,
     isSelected: PropTypes.bool,
+    isDisabled: PropTypes.bool,
     onClick: PropTypes.func,
     onParentKeyPress: PropTypes.func
 };

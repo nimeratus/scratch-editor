@@ -43,9 +43,14 @@ class LanguageMenu extends BaseMenu {
         // If we are using hover rather than clicks for submenus, scroll the selected option into view
         if (!this.props.menuOpen && this.selectedRef) {
             this.selectedRef.scrollIntoView({block: 'center'});
-            this.refocusRef(this.selectedRef);
         }
     }
+
+    handleOnOpen () {
+        super.handleOnOpen();
+        this.refocusItemByIndex(Object.keys(locales).indexOf(this.props.currentLocale));
+    }
+
 
     render () {
         const {

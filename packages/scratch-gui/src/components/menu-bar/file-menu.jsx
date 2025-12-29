@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './menu-bar.css';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import bindAll from 'lodash.bindall';
 
 import fileIcon from './icon--file.svg';
 import {FormattedMessage} from 'react-intl';
@@ -18,8 +17,6 @@ import intlShape from '../../lib/intlShape.js';
 export class FileMenu extends BaseMenu {
     constructor (props) {
         super(props);
-
-        bindAll(this, ['handleOnClose', 'handleKeyPress', 'handleOnOpen']);
 
         this.newProjectRef = React.createRef();
         this.saveRef = React.createRef();

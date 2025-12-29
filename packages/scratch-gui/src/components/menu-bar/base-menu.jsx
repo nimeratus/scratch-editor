@@ -1,4 +1,4 @@
-import {MenuRefContext} from '../context-menu/menu-path-context';
+import {MenuRefContext} from '../context-menu/menu-ref-context';
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
@@ -10,7 +10,7 @@ define this.itemRefs
 add onKeyDown={this.handleKeyPress}
 and onParentKeyPress={this.handleKeyPressSubmenu} for MenuItem elements
 
-and replace isOpenMenu-like props with this.isExpanded()
+and replace isOpenMenu-like props with this.isExpanded() checks
 
 They should also receive:
 ______________________
@@ -29,11 +29,11 @@ export class BaseMenu extends React.PureComponent {
             'handleOnOpen',
             'handleOnClose',
             'refocusRef',
-            'isExpanded',
-            'isInnermostExpanded'
+            'refocusItemByIndex',
+            'isExpanded'
         ]);
         
-        this.state = {focusedIndex: -1, depth: -1};
+        this.state = {focusedIndex: -1};
         this.menuRef = props.menuRef;
     }
 
@@ -43,6 +43,12 @@ export class BaseMenu extends React.PureComponent {
         if (ref && ref.current) {
             ref.current.focus();
         }
+    }
+
+    refocusItemByIndex (index) {
+        this.setState({focusedIndex: index}, () => {
+            this.refocusRef(this.itemRefs[index]);
+        });
     }
 
     handleKeyPress (e) {
@@ -62,7 +68,6 @@ export class BaseMenu extends React.PureComponent {
     }
 
     handleKeyPressOpenMenu (e) {
-        console.log("pressing");
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             this.handleMove(1);
@@ -84,9 +89,7 @@ export class BaseMenu extends React.PureComponent {
         if (this.context.isOpenMenu(this.menuRef)) return;
 
         this.props.onOpen();
-        this.setState({focusedIndex: 0}, () => {
-            this.refocusRef(this.itemRefs[0]);
-        });
+        this.refocusItemByIndex(0);
 
         this.context.push(this.menuRef, this.props.depth);
     }
@@ -96,7 +99,6 @@ export class BaseMenu extends React.PureComponent {
         this.setState({focusedIndex: newIndex}, () => {
             this.refocusRef(this.itemRefs[newIndex]);
         });
-        console.log(newIndex);
         this.context.print();
     }
 
@@ -111,10 +113,6 @@ export class BaseMenu extends React.PureComponent {
 
     isExpanded () {
         return this.context.isOpenMenu(this.menuRef);
-    }
-
-    isInnermostExpanded () {
-        return this.context.isTopMenu(this.menuRef);
     }
 }
 

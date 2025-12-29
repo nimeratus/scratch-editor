@@ -2,7 +2,6 @@ import React from 'react';
 import styles from './menu-bar.css';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import bindAll from 'lodash.bindall';
 
 import {FormattedMessage} from 'react-intl';
 import MenuBarMenu from './menu-bar-menu.jsx';
@@ -12,8 +11,6 @@ import {BaseMenu} from './base-menu';
 export class ModeMenu extends BaseMenu {
     constructor (props) {
         super(props);
-
-        bindAll(this);
 
         this.normalRef = React.createRef();
         this.caturdayRef = React.createRef();
