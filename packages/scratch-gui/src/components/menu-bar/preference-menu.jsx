@@ -54,18 +54,16 @@ PreferenceItem.propTypes = {
     itemRef: PropTypes.shape({current: PropTypes.instanceOf(Element)})
 };
 
-const PreferenceMenu = props => {
-    const {
-        itemsMap,
-        onChange,
-        defaultMenuIconSrc,
-        submenuLabel,
-        selectedItemKey,
-        isRtl,
-        menuRef,
-        ariaLabel
-    } = props;
-
+const PreferenceMenu = ({
+    itemsMap,
+    onChange,
+    defaultMenuIconSrc,
+    submenuLabel,
+    selectedItemKey,
+    isRtl,
+    menuRef,
+    ariaLabel
+}) => {
     const itemRefs = Object.keys(itemsMap).map(() => React.createRef());
 
     const itemKeys = Object.keys(itemsMap);

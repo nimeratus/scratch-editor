@@ -27,21 +27,20 @@ const fileMenu = defineMessage({
     description: 'ARIA label for file menu'
 });
 
-const FileMenu = props => {
-    const {
-        isRtl,
-        menuRef,
-        canSave,
-        canCreateCopy,
-        canRemix,
-        onClickNew,
-        onClickSave,
-        onClickSaveAsCopy,
-        onClickRemix,
-        onStartSelectingFileUpload,
-        getSaveToComputerHandler,
-        remixMessage
-    } = props;
+const FileMenu = ({
+    isRtl,
+    menuRef,
+    canSave,
+    canCreateCopy,
+    canRemix,
+    onClickNew,
+    onClickSave,
+    onClickSaveAsCopy,
+    onClickRemix,
+    onStartSelectingFileUpload,
+    getSaveToComputerHandler,
+    remixMessage
+}) => {
     const intl = useIntl();
 
     const newProjectRef = useRef(null);

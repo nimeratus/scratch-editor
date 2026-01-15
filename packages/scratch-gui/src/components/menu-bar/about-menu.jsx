@@ -35,7 +35,11 @@ AboutButton.propTypes = {
     onClick: PropTypes.func.isRequired
 };
 
-const AboutMenu = ({menuRef, onClick, isRtl}) => {
+const AboutMenu = ({
+    menuRef,
+    onClick,
+    isRtl
+}) => {
     const intl = useIntl();
 
     const itemRefs = onClick.map(() => useRef(null));

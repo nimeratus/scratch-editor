@@ -21,16 +21,14 @@ const accountMenu = defineMessage({
     description: 'ARIA label for account menu'
 });
 
-const AccountMenu = props => {
-    const {
-        menuRef,
-        menuOpts,
-        username,
-        isRtl,
-        onLogOut,
-        avatarBadge
-    } = props;
-
+const AccountMenu = ({
+    menuRef,
+    menuOpts,
+    username,
+    isRtl,
+    onLogOut,
+    avatarBadge
+}) => {
     const {
         avatarUrl,
         myStuffUrl,

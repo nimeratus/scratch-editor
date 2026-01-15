@@ -56,7 +56,7 @@ export default function useMenuNavigation ({
         if (focusedIndex >= 0) {
             refocusRef(itemRefs[focusedIndex]);
         }
-    }, [focusedIndex]);
+    }, [focusedIndex, refocusRef]);
 
     const isExpanded = useCallback(
         () => menuContext.isOpenMenu(menuRef),
@@ -68,7 +68,7 @@ export default function useMenuNavigation ({
 
         menuContext.openInnerMenu(menuRef, depth);
         setFocusedIndex(defaultIndexOnOpen);
-    }, [menuContext, menuRef, depth]);
+    }, [menuContext, menuRef, depth, defaultIndexOnOpen]);
 
     const handleOnClose = useCallback(() => {
         setFocusedIndex(-1);
@@ -85,7 +85,7 @@ export default function useMenuNavigation ({
             itemRefs.length;
 
         setFocusedIndex(nextIndex);
-    }, [focusedIndex, itemRefs, refocusRef]);
+    }, [focusedIndex, itemRefs]);
 
     const handleKeyPressOpenMenu = useCallback(e => {
         // Logic for vertical menus, will need to change when implementing for vertical
@@ -101,7 +101,7 @@ export default function useMenuNavigation ({
             e.preventDefault();
             handleOnClose();
         }
-    }, [handleMove, handleOnClose, menuContext]);
+    }, [handleMove, handleOnClose]);
 
     const handleKeyPress = useCallback(e => {
         if (isExpanded() && depth === 1 && e.key === KEY.TAB) {

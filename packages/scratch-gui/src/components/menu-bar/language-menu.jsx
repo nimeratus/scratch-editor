@@ -22,13 +22,12 @@ const languageMenu = defineMessage({
     description: 'ARIA label for language menu'
 });
 
-const LanguageMenu = props => {
-    const {
-        currentLocale,
-        menuRef,
-        isRtl,
-        onChangeLanguage
-    } = props;
+const LanguageMenu = ({
+    currentLocale,
+    menuRef,
+    isRtl,
+    onChangeLanguage
+}) => {
     const intl = useIntl();
 
     const itemRefs = React.useMemo(() => Object.keys(locales).map(() => React.createRef()), []);
@@ -59,8 +58,8 @@ const LanguageMenu = props => {
 
     const handleMouseOver = useCallback(() => {
         // If we are using hover rather than clicks for submenus, scroll the selected option into view
-        if (isExpanded() && selectedRef) {
-            selectedRef.scrollIntoView({block: 'center'});
+        if (isExpanded() && selectedRef.current) {
+            selectedRef.current.scrollIntoView({block: 'center'});
         }
     }, [isExpanded]);
 

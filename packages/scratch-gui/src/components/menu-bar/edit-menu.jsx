@@ -20,13 +20,12 @@ const editMenu = defineMessage({
     description: 'ARIA label for edit menu'
 });
 
-const EditMenu = props => {
-    const {
-        menuRef,
-        isRtl,
-        onRestoreOption,
-        restoreOptionMessage
-    } = props;
+const EditMenu = ({
+    menuRef,
+    isRtl,
+    onRestoreOption,
+    restoreOptionMessage
+}) => {
     const intl = useIntl();
 
     const restoreRef = useRef(null);

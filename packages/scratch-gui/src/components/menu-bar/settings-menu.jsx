@@ -45,20 +45,18 @@ const ariaMessages = defineMessages({
 
 const enabledColorModes = [DEFAULT_MODE, HIGH_CONTRAST_MODE];
 
-const SettingsMenu = props => {
-    const {
-        menuRef,
-        canChangeLanguage,
-        canChangeColorMode,
-        canChangeTheme,
-        hasActiveMembership,
-        isRtl,
-        activeColorMode,
-        onChangeColorMode,
-        activeTheme,
-        onChangeTheme
-    } = props;
-    
+const SettingsMenu = ({
+    menuRef,
+    canChangeLanguage,
+    canChangeColorMode,
+    canChangeTheme,
+    hasActiveMembership,
+    isRtl,
+    activeColorMode,
+    onChangeColorMode,
+    activeTheme,
+    onChangeTheme
+}) => {
     const intl = useIntl();
 
     const enabledColorModesMap = useMemo(() => Object.keys(colorModeMap).reduce((acc, colorMode) => {

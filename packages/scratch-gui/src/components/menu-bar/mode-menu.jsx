@@ -22,14 +22,13 @@ const modeMenu = defineMessage({
     description: 'ARIA label for mode menu'
 });
 
-const ModeMenu = props => {
-    const {
-        isRtl,
-        mode2020,
-        modeNow,
-        onSetMode,
-        menuRef
-    } = props;
+const ModeMenu = ({
+    isRtl,
+    mode2020,
+    modeNow,
+    onSetMode,
+    menuRef
+}) => {
     const intl = useIntl();
 
     const normalRef = useRef(null);
