@@ -1,15 +1,6 @@
 import {useCallback, useContext, useState, useEffect} from 'react';
 import {MenuRefContext} from '../contexts/menu-ref-context';
-
-const KEY = {
-    ARROW_UP: 'ArrowUp',
-    ARROW_DOWN: 'ArrowDown',
-    ARROW_LEFT: 'ArrowLeft',
-    ARROW_RIGHT: 'ArrowRight',
-    ESCAPE: 'Escape',
-    TAB: 'Tab',
-    SPACE: ' '
-};
+import {KEY} from '../lib/navigation-keys';
 
 /**
  * Provides keyboard navigation and focus management logic for menu components.

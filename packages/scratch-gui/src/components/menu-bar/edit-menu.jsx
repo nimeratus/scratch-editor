@@ -14,7 +14,7 @@ import DeletionRestorer from '../../containers/deletion-restorer.jsx';
 import TurboMode from '../../containers/turbo-mode.jsx';
 import propTypes from '../../lib/prop-types.js';
 
-const editMenu = defineMessage({
+const editMenuAriaMessage = defineMessage({
     id: 'gui.aria.editMenu',
     defaultMessage: 'Edit menu',
     description: 'accessibility label for edit menu'
@@ -51,7 +51,7 @@ const EditMenu = ({
                 [styles.active]: isExpanded()
             })}
             onClick={handleOnOpen}
-            aria-label={intl.formatMessage(editMenu)}
+            aria-label={intl.formatMessage(editMenuAriaMessage)}
             aria-expanded={isExpanded()}
             onKeyDown={handleKeyPress}
             ref={menuRef}

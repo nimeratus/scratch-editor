@@ -309,7 +309,7 @@ class MenuBar extends React.Component {
                 )}
                 iconClassName={styles.remixButtonIcon}
                 iconSrc={remixIcon}
-                onClick={this.handleClickRemix}
+                onClick={this.props.onClickRemix}
             >
                 {remixMessage}
             </Button>
@@ -462,7 +462,6 @@ class MenuBar extends React.Component {
                     <Divider className={classNames(styles.divider)} />
                     <div className={styles.fileGroup}>
                         <button
-                            tabIndex={0}
                             aria-label={this.props.intl.formatMessage(ariaMessages.tutorials)}
                             className={
                                 classNames(styles.menuBarItem, styles.noOffset, styles.hoverable, 'tutorials-button')
@@ -478,7 +477,6 @@ class MenuBar extends React.Component {
                             </span>
                         </button>
                         <button
-                            tabIndex={0}
                             aria-label={this.props.intl.formatMessage(ariaMessages.debug)}
                             className={classNames(styles.menuBarItem, styles.noOffset, styles.hoverable)}
                             onClick={this.props.onOpenDebugModal}

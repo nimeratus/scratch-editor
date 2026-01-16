@@ -15,8 +15,8 @@
     width: 100%;
     padding: 0;
 
-    background: none;
-    border: none;
+    background: inherit;
+    border: inherit;
     font: inherit;
     text-align: inherit;
     cursor: pointer;
