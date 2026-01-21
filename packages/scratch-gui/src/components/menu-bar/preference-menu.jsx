@@ -76,7 +76,7 @@ const PreferenceMenu = ({
     return (
         <MenuItem
             expanded={isExpanded()}
-            data-menu-item-wrapper="true"
+            isDataMenuItemWrapper
         >
             <button
                 className={styles.option}
@@ -85,7 +85,7 @@ const PreferenceMenu = ({
                 aria-expanded={isExpanded()}
                 tabIndex={-1}
                 onKeyDown={handleKeyDown}
-                data-menu-item="true"
+                data-menu-item
             >
                 <img
                     src={selectedItem.icon || defaultMenuIconSrc}
@@ -103,7 +103,7 @@ const PreferenceMenu = ({
                 {itemKeys.map(itemKey => (
                     <PreferenceItem
                         onParentKeyPress={handleKeyDownOpenMenu}
-                        data-menu-item="true"
+                        isDataMenuItem
                         key={itemKey}
                         isSelected={itemKey === selectedItemKey}
                         // eslint-disable-next-line react/jsx-no-bind

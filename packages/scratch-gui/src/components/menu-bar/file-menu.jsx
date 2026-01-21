@@ -103,7 +103,7 @@ const FileMenu = ({
                 <MenuSection>
                     <MenuItem
                         onClick={onClickNew}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         {newProjectMessage}
@@ -114,7 +114,7 @@ const FileMenu = ({
                         {canSave && (
                             <MenuItem
                                 onClick={onClickSave}
-                                data-menu-item="true"
+                                isDataMenuItem
                                 onParentKeyPress={handleKeyDownOpenMenu}
                             >
                                 {saveNowMessage}
@@ -123,7 +123,7 @@ const FileMenu = ({
                         {canCreateCopy && (
                             <MenuItem
                                 onClick={onClickSaveAsCopy}
-                                data-menu-item="true"
+                                isDataMenuItem
                                 onParentKeyPress={handleKeyDownOpenMenu}
                             >
                                 {createCopyMessage}
@@ -132,7 +132,7 @@ const FileMenu = ({
                         {canRemix && (
                             <MenuItem
                                 onClick={onClickRemix}
-                                data-menu-item="true"
+                                isDataMenuItem
                                 onParentKeyPress={handleKeyDownOpenMenu}
                             >
                                 {remixMessage}
@@ -143,7 +143,7 @@ const FileMenu = ({
                 <MenuSection>
                     <MenuItem
                         onClick={onStartSelectingFileUpload}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         {intl.formatMessage(sharedMessages.loadFromComputerTitle)}
@@ -152,7 +152,7 @@ const FileMenu = ({
                         <MenuItem
                             className={className}
                             onClick={getSaveToComputerHandler(downloadProjectCallback)}
-                            data-menu-item="true"
+                            isDataMenuItem
                             onParentKeyPress={handleKeyDownOpenMenu}
                         >
                             <FormattedMessage

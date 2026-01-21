@@ -64,11 +64,12 @@ const MenuItem = ({
     expanded = false,
     isSelected = false,
     isDisabled = false,
+    isDataMenuItem = false,
+    isDataMenuItemWrapper = false,
     onClick,
     ariaLabel,
     ariaRole,
-    onParentKeyPress,
-    ...props
+    onParentKeyPress
 }) => (
     <li
         className={classNames(
@@ -84,7 +85,8 @@ const MenuItem = ({
         aria-disabled={isDisabled}
         role={ariaRole}
         onKeyDown={onParentKeyPress}
-        {...props}
+        data-menu-item={isDataMenuItem}
+        data-menu-item-wrapper={isDataMenuItemWrapper}
     >
         {children}
     </li>
@@ -98,6 +100,8 @@ MenuItem.propTypes = {
     expanded: PropTypes.bool,
     isSelected: PropTypes.bool,
     isDisabled: PropTypes.bool,
+    isDataMenuItem: PropTypes.bool,
+    isDataMenuItemWrapper: PropTypes.bool,
     onClick: PropTypes.func,
     onParentKeyPress: PropTypes.func
 };

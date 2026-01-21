@@ -17,7 +17,7 @@ const MENU_ITEM_WRAPPER_SELECTOR = '[data-menu-item-wrapper="true"]';
  *
  * Notes:
  * - Menu items can be direct children or wrapped in a container marked with
- *   `data-menu-item-wrapper="true"`. The BFS will traverse until it finds menu items
+ *   `data-menu-item-wrapper`. The BFS will traverse until it finds menu items
  *   or wrapped menu items, but will not go deeper than needed.
  * - The hook automatically skips the starting element itself when looking for siblings.
  *
@@ -29,9 +29,10 @@ const MENU_ITEM_WRAPPER_SELECTOR = '[data-menu-item-wrapper="true"]';
  *    - tabIndex={0} if it's the core menu accessible via Tab
  *    - aria-expanded={isExpanded()}
  * 2. Mark each submenu item or leaf menu item with:
- *    - data-menu-item="true"
- * 3. If an expandable submenu is wrapped, mark the wrapper with:
- *    - data-menu-item-wrapper="true"
+ *    - data-menu-item
+ * 3. If an expandable submenu is wrapped and button does not contain the submenu items as children,
+ * mark the wrapper with:
+ *    - data-menu-item-wrapper
  *    - see SettingsMenu -> LanguageMenu | PreferenceMenu logic for reference
  * @param {object} params
  *   Parameters object
@@ -136,7 +137,7 @@ export default function useMenuNavigation ({
         // component doesn't contain its subitems as children
         // it is a little bit hacky, some of the logic here could be refactored a little bit
         if (!buttonContainsMenuItems) {
-            if (isExpanded() && depth === 1 && e.key === KEY.TAB) {
+            if (depth === 1 && e.key === KEY.TAB) {
                 handleOnClose();
                 menuContext.closeAllMenus();
                 return;

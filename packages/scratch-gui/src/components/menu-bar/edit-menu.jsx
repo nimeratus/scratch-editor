@@ -67,7 +67,7 @@ const EditMenu = ({
                     <MenuItem
                         className={classNames({[styles.disabled]: !restorable})}
                         onClick={onRestoreOption(handleRestore)}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                         isDisabled={!restorable}
                     >
@@ -78,7 +78,7 @@ const EditMenu = ({
                     <TurboMode>{(toggleTurboMode, {turboMode}) => (
                         <MenuItem
                             onClick={toggleTurboMode}
-                            data-menu-item="true"
+                            isDataMenuItem
                             onParentKeyPress={handleKeyDownOpenMenu}
                         >
                             {turboMode ? (

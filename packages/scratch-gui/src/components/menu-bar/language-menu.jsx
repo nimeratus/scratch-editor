@@ -61,7 +61,7 @@ const LanguageMenu = ({
     return (
         <MenuItem
             expanded={isExpanded()}
-            data-menu-item-wrapper="true"
+            isDataMenuItemWrapper
         >
             <button
                 className={styles.option}
@@ -72,7 +72,7 @@ const LanguageMenu = ({
                 aria-expanded={isExpanded()}
                 tabIndex={-1}
                 onKeyDown={handleKeyDown}
-                data-menu-item="true"
+                data-menu-item
             >
                 <img
                     className={styles.icon}
@@ -104,7 +104,7 @@ const LanguageMenu = ({
                                 className={styles.languageMenuItem}
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onClick={() => onChangeLanguage(locale)}
-                                data-menu-item="true"
+                                isDataMenuItem
                                 onParentKeyPress={handleKeyDownOpenMenu}
                                 isSelected={isSelected}
                             >

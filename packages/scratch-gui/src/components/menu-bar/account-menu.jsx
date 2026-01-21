@@ -54,7 +54,7 @@ const AccountMenu = ({
 
     return (
         <div
-            data-menu-item-wrapper="true"
+            data-menu-item-wrapper
             className={styles.accountMenu}
         >
             <button
@@ -99,7 +99,7 @@ const AccountMenu = ({
                 {profileUrl ? (
                     <MenuItemContainer
                         href={profileUrl}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         <FormattedMessage
@@ -113,7 +113,7 @@ const AccountMenu = ({
                 {myStuffUrl ? (
                     <MenuItemContainer
                         href={myStuffUrl}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         <FormattedMessage
@@ -127,7 +127,7 @@ const AccountMenu = ({
                 {myClassesUrl ? (
                     <MenuItemContainer
                         href={myClassesUrl}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         <FormattedMessage
@@ -141,7 +141,7 @@ const AccountMenu = ({
                 {myClassUrl ? (
                     <MenuItemContainer
                         href={myClassUrl}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         <FormattedMessage
@@ -155,7 +155,7 @@ const AccountMenu = ({
                 {accountSettingsUrl ? (
                     <MenuItemContainer
                         href={accountSettingsUrl}
-                        data-menu-item="true"
+                        isDataMenuItem
                         onParentKeyPress={handleKeyDownOpenMenu}
                     >
                         <FormattedMessage
@@ -170,7 +170,7 @@ const AccountMenu = ({
                     <MenuSection>
                         <MenuItemContainer
                             onClick={onLogOut}
-                            data-menu-item="true"
+                            isDataMenuItem
                             onParentKeyPress={handleKeyDownOpenMenu}
                         >
                             <FormattedMessage
