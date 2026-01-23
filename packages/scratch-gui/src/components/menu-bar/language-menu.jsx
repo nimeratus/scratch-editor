@@ -11,7 +11,8 @@ import languageIcon from '../language-selector/language-icon.svg';
 import {selectLocale} from '../../reducers/locales.js';
 import useMenuNavigation from '../../hooks/use-menu-navigation.jsx';
 
-import styles from './settings-menu.css';
+import stylesSettingsMenu from './settings-menu.css';
+import stylesLanguageMenu from './language-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
 
@@ -56,22 +57,22 @@ const LanguageMenu = ({
     return (
         <MenuItem
             ref={menuRef}
-            isDataMenuItemWrapper
             isExpanded={isExpanded()}
             ariaLabel={intl.formatMessage(languageMenu)}
             onKeyDown={handleKeyDown}
+            isDataMenuItemWrapper
         >
             <button
-                className={styles.option}
+                className={stylesSettingsMenu.option}
                 onClick={handleOnOpen}
                 onMouseOver={handleMouseOver}
                 data-menu-item
             >
                 <img
-                    className={styles.icon}
+                    className={stylesSettingsMenu.icon}
                     src={languageIcon}
                 />
-                <span className={styles.submenuLabel}>
+                <span className={stylesSettingsMenu.submenuLabel}>
                     <FormattedMessage
                         defaultMessage="Language"
                         description="Language sub-menu"
@@ -79,12 +80,12 @@ const LanguageMenu = ({
                     />
                 </span>
                 <img
-                    className={styles.expandCaret}
+                    className={stylesSettingsMenu.expandCaret}
                     src={dropdownCaret}
                 />
             </button>
             <Submenu
-                className={styles.languageSubmenu}
+                className={stylesLanguageMenu.languageSubmenu}
                 place={isRtl ? 'left' : 'right'}
             >
                 {
@@ -94,7 +95,7 @@ const LanguageMenu = ({
 
                             return (<MenuItem
                                 key={locale}
-                                className={styles.languageMenuItem}
+                                className={stylesLanguageMenu.languageMenuItem}
                                 // eslint-disable-next-line react/jsx-no-bind
                                 onClick={() => onChangeLanguage(locale)}
                                 isDataMenuItem
@@ -102,8 +103,8 @@ const LanguageMenu = ({
                                 isSelected={isSelected}
                             >
                                 <img
-                                    className={classNames(styles.check, {
-                                        [styles.selected]: isSelected
+                                    className={classNames(stylesSettingsMenu.check, {
+                                        [stylesSettingsMenu.selected]: isSelected
                                     })}
                                     src={check}
                                     {...(isSelected && {ref: setRef})}
