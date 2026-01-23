@@ -97,7 +97,7 @@ export default function useMenuNavigation ({
     );
 
     const findDirectSubitemsClickable = useCallback(
-        () => findDirectSubitems().map(([_, child]) => child),
+        () => findDirectSubitems().map(([wrapper, child]) => child),
         [findDirectSubitems]
     );
 
@@ -164,7 +164,9 @@ export default function useMenuNavigation ({
                 const clickableItems = findDirectSubitemsClickable();
 
                 const index = focusableItems.indexOf(focusedItem);
-                clickableItems[index].click();
+                if (index >= 0 && clickableItems[index]) {
+                    clickableItems[index].click();
+                }
                 break;
             }
         }

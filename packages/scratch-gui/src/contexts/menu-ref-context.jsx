@@ -65,10 +65,10 @@ export const MenuRefProvider = ({children}) => {
 
     const outermostMenu = useMemo(() => (refStack.length > 0 ? refStack[0] : null), [refStack]);
 
-    const isInnermostMenu = useCallback(ref => (refStack.length > 0 &&
-        refStack[refStack.length - 1] === ref), [refStack]);
+    const isInnermostMenu = useCallback(ref => refStack.length > 0 &&
+        refStack[refStack.length - 1] === ref, [refStack]);
 
-    const isOpenMenu = useCallback(ref => (refStack.includes(ref)), [refStack]);
+    const isOpenMenu = useCallback(ref => refStack.includes(ref), [refStack]);
 
     const value = useMemo(() => ({
         refStack,

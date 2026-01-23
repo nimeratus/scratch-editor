@@ -133,10 +133,10 @@ const SettingsMenu = ({
 };
 
 SettingsMenu.propTypes = {
-    canChangeLanguage: PropTypes.bool.isRequired,
-    canChangeColorMode: PropTypes.bool.isRequired,
-    canChangeTheme: PropTypes.bool.isRequired,
-    hasActiveMembership: PropTypes.bool.isRequired,
+    canChangeLanguage: PropTypes.bool,
+    canChangeColorMode: PropTypes.bool,
+    canChangeTheme: PropTypes.bool,
+    hasActiveMembership: PropTypes.bool,
     isRtl: PropTypes.bool,
     activeColorMode: PropTypes.string,
     onChangeColorMode: PropTypes.func,
