@@ -1,4 +1,4 @@
-import {useCallback, useContext, useState, useRef} from 'react';
+import {useCallback, useContext, useRef} from 'react';
 import {MenuRefContext} from '../contexts/menu-ref-context';
 import {KEY} from '../lib/navigation-keys';
 
@@ -25,7 +25,7 @@ const MENU_ITEM_WRAPPER_SELECTOR = '[data-menu-item-wrapper="true"]';
  * - onClick={handleOnOpen}
  * - ref={menuRef}
  * - onKeyDown={handleKeyDown}
- * - tabIndex={0} or {-1} depending on the kind of focusability we want
+ * - Make sure the element is focusable
  * - aria-expanded={isExpanded()} (and use it wherever else needed)
  * - for menu items pass onKeyDown={handleKeyDownOpenMenu}
  * 2. For the sake of consistent code structure, it is recommended for the core menus (depth 1)
@@ -56,7 +56,6 @@ export default function useMenuNavigation ({
 }) {
     const menuRef = useRef(null);
     const menuContext = useContext(MenuRefContext);
-    const [focusedItem, setFocusedItem] = useState(null);
 
     // BFS to find first children with attribute
     const findDirectSubitems = useCallback(() => {
@@ -70,8 +69,8 @@ export default function useMenuNavigation ({
             const element = children.shift();
             if (element.matches(MENU_ITEM_SELECTOR)) {
                 // Skip original starting element if we went back to the wrapper
-                if (!(menuRef.current.matches(MENU_ITEM_WRAPPER_SELECTOR) &&
-                    Array.from(menuRef.current.children).includes(element))) {
+                if (!(root.matches(MENU_ITEM_WRAPPER_SELECTOR) &&
+                    Array.from(root.children).includes(element))) {
                     directSubitems.push([element, element]);
                 }
                 continue;
@@ -109,7 +108,6 @@ export default function useMenuNavigation ({
     const focusItem = useCallback(item => {
         if (item) {
             item.focus();
-            setFocusedItem(item);
         }
     }, []);
 
@@ -126,7 +124,6 @@ export default function useMenuNavigation ({
     }, [menuContext, menuRef, depth, defaultIndexOnOpen]);
 
     const handleOnClose = useCallback(() => {
-        setFocusedItem(null);
         menuContext.closeMenuByRef(menuRef);
         menuRef?.current?.focus();
     }, [menuContext, menuRef]);
@@ -135,25 +132,28 @@ export default function useMenuNavigation ({
         const items = findDirectSubitemsFocusable();
         if (!items.length) return;
 
-        const currentIndex = items.indexOf(focusedItem);
+        const currentIndex = items.indexOf(document.activeElement);
         const nextIndex = (currentIndex + direction + items.length) % items.length;
         focusItem(items[nextIndex]);
-    }, [focusedItem, menuRef, focusItem]);
+    }, [menuRef, focusItem]);
 
     const handleKeyDownOpenMenu = useCallback(e => {
         // Logic for vertical menus, will need to change when implementing for horizontal
         switch (e.key) {
         case KEY.ARROW_DOWN:
             e.preventDefault();
+            e.stopPropagation();
             handleMove(1);
             break;
         case KEY.ARROW_UP:
             e.preventDefault();
+            e.stopPropagation();
             handleMove(-1);
             break;
         case KEY.ESCAPE:
         case KEY.ARROW_LEFT:
             e.preventDefault();
+            e.stopPropagation();
             handleOnClose();
             break;
         case KEY.ENTER:
@@ -162,8 +162,8 @@ export default function useMenuNavigation ({
             {
                 const focusableItems = findDirectSubitemsFocusable();
                 const clickableItems = findDirectSubitemsClickable();
-
-                const index = focusableItems.indexOf(focusedItem);
+                
+                const index = focusableItems.indexOf(document.activeElement);
                 if (index >= 0 && clickableItems[index]) {
                     clickableItems[index].click();
                 }
@@ -199,7 +199,6 @@ export default function useMenuNavigation ({
 
     return {
         menuRef,
-        focusedItem,
         isExpanded,
         handleKeyDown,
         handleKeyDownOpenMenu,

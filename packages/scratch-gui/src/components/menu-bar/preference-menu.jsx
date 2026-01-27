@@ -26,7 +26,7 @@ const PreferenceItem = props => {
             onClick={props.onClick}
             onParentKeyDown={props.onParentKeyDown}
             isSelected={props.isSelected}
-            {...props}
+            isDataMenuItem={props.isDataMenuItem}
         >
             <div className={styles.option}>
                 <img
@@ -49,7 +49,8 @@ PreferenceItem.propTypes = {
         icon: PropTypes.string,
         label: intlMessageShape.isRequired
     }),
-    onParentKeyDown: PropTypes.func
+    onParentKeyDown: PropTypes.func,
+    isDataMenuItem: PropTypes.bool
 };
 
 const PreferenceMenu = ({

@@ -79,8 +79,6 @@ const SettingsMenu = ({
         onClick={handleOnOpen}
         onKeyDown={handleKeyDown}
         ref={menuRef}
-        data-menu-item
-        data-menu-item-wrapper
     >
         <img src={settingsIcon} />
         <span className={styles.dropdownLabel}>
@@ -98,7 +96,7 @@ const SettingsMenu = ({
             onRequestClose={handleOnClose}
         >
             <MenuSection>
-                {canChangeLanguage && <LanguageMenu depth={2} />}
+                {canChangeLanguage && <LanguageMenu depth={depth + 1} />}
                 {canChangeTheme &&
                     // TODO: Consider always showing the theme menu, even if there is a single available theme
                     availableThemesLength > 1 &&
@@ -113,7 +111,7 @@ const SettingsMenu = ({
                         }}
                         selectedItemKey={activeTheme}
                         isRtl={isRtl}
-                        depth={2}
+                        depth={depth + 1}
                     />}
                 {canChangeColorMode && <PreferenceMenu
                     itemsMap={enabledColorModesMap}
@@ -125,7 +123,7 @@ const SettingsMenu = ({
                     }}
                     selectedItemKey={activeColorMode}
                     isRtl={isRtl}
-                    depth={2}
+                    depth={depth + 1}
                 />}
             </MenuSection>
         </MenuBarMenu>
