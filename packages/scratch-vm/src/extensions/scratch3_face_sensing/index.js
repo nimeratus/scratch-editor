@@ -61,6 +61,13 @@ class Scratch3FaceSensingBlocks {
          * @type {Runtime}
          */
         this.runtime = runtime;
+        
+        /**
+         * A flag to determine if this extension has been installed in a project.
+         * It is set to false the first time getInfo is run.
+         * @type {boolean}
+         */
+        this.firstInstall = true;
 
         /**
          * Cached value for detected face size
@@ -88,7 +95,7 @@ class Scratch3FaceSensingBlocks {
             {length: Scratch3FaceSensingBlocks.IS_DETECTED_ARRAY_LENGTH},
             () => false
         );
-
+        
         this.runtime.emit('EXTENSION_DATA_LOADING', true);
 
         const model = FaceDetection.SupportedModels.MediaPipeFaceDetector;
@@ -318,11 +325,16 @@ class Scratch3FaceSensingBlocks {
      * @returns {object} metadata for this extension and its blocks.
      */
     getInfo () {
-        // Enable the video layer
-        this.runtime.ioDevices.video.enableVideo()
-            .finally(() => {
-                this._videoLoadingCompleted = true;
-            });
+        // Turn on the camera when the extension is added,
+        // but don't turn on when switching sprites.
+        if(this.firstInstall) {
+            // Enable the video layer
+            this.runtime.ioDevices.video.enableVideo()
+                .finally(() => {
+                    this._videoLoadingCompleted = true;
+                });
+        }
+        this.firstInstall = false;
 
         return {
             id: 'faceSensing',
