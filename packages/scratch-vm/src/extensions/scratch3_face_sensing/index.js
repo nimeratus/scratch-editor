@@ -326,7 +326,7 @@ class Scratch3FaceSensingBlocks {
      */
     getInfo () {
         // Turn on the camera when the extension is added,
-        // but don't turn on when switching sprites.
+        // but don't turn on when switching sprites
         if(this.firstInstall) {
             // Enable the video layer
             this.runtime.ioDevices.video.enableVideo()
