@@ -75,15 +75,18 @@ class VideoToggler {
     /**
      * Turns video on/off if a project is loaded
      * @param {VideoState} state - the video state to set the device to
+     * @returns {Promise<void|Video>}
      */
     videoToggle (state) {
         this.globalVideoState = state;
         if (state === VideoState.OFF) {
             this.runtime.ioDevices.video.disableVideo();
+            return Promise.resolve();
         } else {
-            this.runtime.ioDevices.video.enableVideo();
+            let promise = this.runtime.ioDevices.video.enableVideo();
             // Mirror if state is ON. Do not mirror if state is ON_FLIPPED.
             this.runtime.ioDevices.video.mirror = state === VideoState.ON;
+            return promise;
         }
     }
 
