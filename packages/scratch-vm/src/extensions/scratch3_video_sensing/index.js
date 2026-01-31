@@ -6,6 +6,8 @@ const Clone = require('../../util/clone');
 const Cast = require('../../util/cast');
 const formatMessage = require('format-message');
 const Video = require('../../io/video');
+const VideoState = require('../../extension-support/video-state');
+const VideoToggler = require('../../extension-support/video-toggler');
 
 const VideoMotion = require('./library');
 
@@ -50,22 +52,6 @@ const SensingSubject = {
 };
 
 /**
- * States the video sensing activity can be set to.
- * @readonly
- * @enum {string}
- */
-const VideoState = {
-    /** Video turned off. */
-    OFF: 'off',
-
-    /** Video turned on with default y axis mirroring. */
-    ON: 'on',
-
-    /** Video turned on without default y axis mirroring. */
-    ON_FLIPPED: 'on-flipped'
-};
-
-/**
  * Class for the motion-related blocks in Scratch 3.0
  * @param {Runtime} runtime - the runtime instantiating this block package.
  * @class
@@ -86,6 +72,13 @@ class Scratch3VideoSensingBlocks {
         this.detect = new VideoMotion();
 
         /**
+         * The class used to toggle video input and keep its state in sync
+         * with the Stage's related properties
+         * @type {VideoToggler}
+         */
+        this.toggler = new VideoToggler(this.runtime);
+
+        /**
          * The last millisecond epoch timestamp that the video stream was
          * analyzed.
          * @type {number}
@@ -100,9 +93,6 @@ class Scratch3VideoSensingBlocks {
         this.firstInstall = true;
 
         if (this.runtime.ioDevices) {
-            // Configure the video device with values from globally stored locations.
-            this.runtime.on(Runtime.PROJECT_LOADED, this.updateVideoDisplay.bind(this));
-
             // Clear target motion state values when the project starts.
             this.runtime.on(Runtime.PROJECT_RUN_START, this.reset.bind(this));
 
@@ -147,62 +137,6 @@ class Scratch3VideoSensingBlocks {
             motionAmount: 0,
             motionDirection: 0
         };
-    }
-
-    /**
-     * The transparency setting of the video preview stored in a value
-     * accessible by any object connected to the virtual machine.
-     * @type {number}
-     */
-    get globalVideoTransparency () {
-        const stage = this.runtime.getTargetForStage();
-        if (stage) {
-            return stage.videoTransparency;
-        }
-        return 50;
-    }
-
-    set globalVideoTransparency (transparency) {
-        const stage = this.runtime.getTargetForStage();
-        if (stage) {
-            stage.videoTransparency = transparency;
-        }
-    }
-
-    /**
-     * The video state of the video preview stored in a value accessible by any
-     * object connected to the virtual machine.
-     * @type {number}
-     */
-    get globalVideoState () {
-        const stage = this.runtime.getTargetForStage();
-        if (stage) {
-            return stage.videoState;
-        }
-        // Though the default value for the stage is normally 'on', we need to default
-        // to 'off' here to prevent the video device from briefly activating
-        // while waiting for stage targets to be installed that say it should be off
-        return VideoState.OFF;
-    }
-
-    set globalVideoState (state) {
-        const stage = this.runtime.getTargetForStage();
-        if (stage) {
-            stage.videoState = state;
-        }
-    }
-
-    /**
-     * Get the latest values for video transparency and state,
-     * and set the video device to use them.
-     */
-    updateVideoDisplay () {
-        this.setVideoTransparency({
-            TRANSPARENCY: this.globalVideoTransparency
-        });
-        this.videoToggle({
-            VIDEO_STATE: this.globalVideoState
-        });
     }
 
     /**
@@ -399,9 +333,8 @@ class Scratch3VideoSensingBlocks {
         // first added to a project, and is overwritten by a PROJECT_LOADED
         // event listener that later calls updateVideoDisplay
         if (this.firstInstall) {
-            this.globalVideoState = VideoState.ON;
-            this.globalVideoTransparency = 50;
-            this.updateVideoDisplay();
+            this.toggler.setVideoTransparency(50);
+            this.toggler.videoToggle(VideoState.ON);
             this.firstInstall = false;
         }
 
@@ -558,14 +491,7 @@ class Scratch3VideoSensingBlocks {
      */
     videoToggle (args) {
         const state = args.VIDEO_STATE;
-        this.globalVideoState = state;
-        if (state === VideoState.OFF) {
-            this.runtime.ioDevices.video.disableVideo();
-        } else {
-            this.runtime.ioDevices.video.enableVideo();
-            // Mirror if state is ON. Do not mirror if state is ON_FLIPPED.
-            this.runtime.ioDevices.video.mirror = state === VideoState.ON;
-        }
+        this.toggler.videoToggle(state);
     }
 
     /**
@@ -577,8 +503,7 @@ class Scratch3VideoSensingBlocks {
      */
     setVideoTransparency (args) {
         const transparency = Cast.toNumber(args.TRANSPARENCY);
-        this.globalVideoTransparency = transparency;
-        this.runtime.ioDevices.video.setPreviewGhost(transparency);
+        this.toggler.setVideoTransparency(transparency);
     }
 }
 
