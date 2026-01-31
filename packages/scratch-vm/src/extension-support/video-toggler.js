@@ -1,3 +1,4 @@
+const Runtime = require('../engine/runtime');
 const VideoState = require('./video-state');
 
 /**
