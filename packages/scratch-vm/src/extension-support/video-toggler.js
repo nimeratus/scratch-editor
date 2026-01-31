@@ -92,6 +92,8 @@ class VideoToggler {
      */
     videoToggle (state) {
         this.globalVideoState = state;
+        // if the Stage isn't loaded yet, setting the video state fails
+        state = this.globalVideoState;
         if (state === VideoState.OFF) {
             this.runtime.ioDevices.video.disableVideo();
             return Promise.resolve();
@@ -114,6 +116,8 @@ class VideoToggler {
             return;
         }
         this.globalVideoTransparency = transparency;
+        // if the Stage isn't loaded yet, setting the transparency fails
+        transparency = this.globalVideoTransparency;
         this.runtime.ioDevices.video.setPreviewGhost(transparency);
     }
 }
