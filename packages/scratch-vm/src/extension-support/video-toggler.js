@@ -1,19 +1,29 @@
 const Runtime = require('../engine/runtime');
 const VideoState = require('./video-state');
+const log = require('../util/log');
 
 /**
  * Class for toggling video device while keeping its state
  * in sync with the Stage's related properties
  * @param {Runtime} runtime - the runtime whose video input will be toggled
+ * @param {boolean} [options.canSetTransparency] - false if the toggler shouldn't
+ *   set the transparency of the video preview. Allows Face Sensing to show an
+ *   opaque preview without overriding the Video Sensing extension's settings
  * @class
  */
 class VideoToggler {
-    constructor (runtime) {
+    constructor (runtime, options) {
         /**
          * The runtime whose video input will be toggled.
          * @type {Runtime}
          */
         this.runtime = runtime;
+
+        /**
+         * Whether this instance can control the transparency of the preview
+         * @type {boolean}
+         */
+        this.canSetTransparency = options?.canSetTransparency ?? true;
 
         if (this.runtime.ioDevices) {
             // Configure the video device with values from globally stored locations.
@@ -69,7 +79,9 @@ class VideoToggler {
      * and set the video device to use them.
      */
     updateVideoDisplay () {
-        this.setVideoTransparency(this.globalVideoTransparency);
+        if(this.canSetTransparency) {
+            this.setVideoTransparency(this.globalVideoTransparency);
+        }
         this.videoToggle(this.globalVideoState);
     }
     
@@ -96,6 +108,11 @@ class VideoToggler {
      * @param {number} transparency - the transparency to set the video preview to
      */
     setVideoTransparency (transparency) {
+        if(!this.canSetTransparency) {
+            log.warn("Tried to set transparency in a VideoToggler" +
+                     " with disabled canSetTransparency flag");
+            return;
+        }
         this.globalVideoTransparency = transparency;
         this.runtime.ioDevices.video.setPreviewGhost(transparency);
     }
