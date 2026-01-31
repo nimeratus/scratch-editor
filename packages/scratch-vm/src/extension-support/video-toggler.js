@@ -1,4 +1,4 @@
-const VideoState = require('../../extension-support/video-state');
+const VideoState = require('./video-state');
 
 /**
  * Class for toggling video device while keeping its state
