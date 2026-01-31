@@ -5,6 +5,8 @@ const formatMessage = require('format-message');
 const Video = require('../../io/video');
 const TargetType = require('../../extension-support/target-type');
 const {distance, toScratchCoords} = require('./utils');
+const VideoState = require('../../extension-support/video-state');
+const VideoToggler = require('../../extension-support/video-toggler');
 
 const FaceDetection = require('@tensorflow-models/face-detection');
 const mediapipePackage = require('@mediapipe/face_detection/package.json');
@@ -68,6 +70,12 @@ class Scratch3FaceSensingBlocks {
          * @type {boolean}
          */
         this.firstInstall = true;
+
+        /**
+         * Thing used to turn on video. It turns on the video if the project is loaded
+         * and video is enabled in the Stage's properties
+         */
+        this.toggler = new VideoToggler(this.runtime);
 
         /**
          * Cached value for detected face size
@@ -329,7 +337,7 @@ class Scratch3FaceSensingBlocks {
         // but don't turn on when switching sprites
         if(this.firstInstall) {
             // Enable the video layer
-            this.runtime.ioDevices.video.enableVideo()
+            this.toggler.videoToggle(VideoState.ON)
                 .finally(() => {
                     this._videoLoadingCompleted = true;
                 });
