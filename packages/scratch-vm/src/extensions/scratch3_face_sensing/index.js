@@ -75,7 +75,7 @@ class Scratch3FaceSensingBlocks {
          * Thing used to turn on video. It turns on the video if the project is loaded
          * and video is enabled in the Stage's properties
          */
-        this.toggler = new VideoToggler(this.runtime);
+        this.toggler = new VideoToggler(this.runtime, {canSetTransparency: false});
 
         /**
          * Cached value for detected face size
