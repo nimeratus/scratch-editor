@@ -26,6 +26,17 @@ export default function useActionMenuNavigation (
     const buttonRef = useRef(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
+    useEffect(() => {
+        if (!isExpanded) {
+            // If menu is closed, blur any focused element to prevent keyboard events from affecting it
+            if (document.activeElement !== document.body) {
+                document.activeElement.blur();
+            }
+            
+            buttonRef?.current?.blur();
+        }
+    }, [isExpanded]);
+
     // Handle clicks/touches outside to close menu
     useEffect(() => {
         const handleTouchOutside = e => {
@@ -40,7 +51,6 @@ export default function useActionMenuNavigation (
             document.removeEventListener('mousedown', handleTouchOutside);
         };
     }, [containerRef, setIsExpanded]);
-
 
     // BFS to find first children with attribute
     const findSubitems = useCallback(() => {
@@ -102,11 +112,9 @@ export default function useActionMenuNavigation (
             break;
         case KEY.TAB:
             if (isExpanded) setIsExpanded(false);
-            buttonRef?.current?.blur();
-
             return;
         }
-    }, [handleMove, isExpanded, setIsExpanded, buttonRef]);
+    }, [handleMove, isExpanded, setIsExpanded]);
 
     return {
         containerRef,
