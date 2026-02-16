@@ -27,7 +27,9 @@ const SpriteSelectorItem = props => {
                 disabled={props.preventContextMenu}
                 asChild
             >
-                <button
+                <div
+                    role="button"
+                    tabIndex={0}
                     aria-label={`${props.name}${props.details ? ` (${props.details})` : ''}`}
                     className={classNames(props.className, styles.spriteSelectorItem, {
                         [styles.isSelected]: props.selected
@@ -66,7 +68,7 @@ const SpriteSelectorItem = props => {
                             onClick={props.onDeleteButtonClick}
                         />
                     ) : null}
-                </button>
+                </div>
             </ContextMenu.Trigger>
             {(props.onDuplicateButtonClick || props.onDeleteButtonClick || props.onExportButtonClick) && (
                 <ContextMenu.Portal>

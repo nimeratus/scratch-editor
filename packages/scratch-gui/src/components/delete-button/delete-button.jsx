@@ -5,39 +5,28 @@ import classNames from 'classnames';
 import styles from './delete-button.css';
 import deleteIcon from './icon--delete.svg';
 
-const DeleteButton = props => {
-
-    const handleKeyDown = useCallback(event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            props.onClick(event);
-        }
-    }, [props.onClick]);
-
-    return (
-        <button
-            aria-label="Delete"
-            className={classNames(
-                styles.deleteButton,
-                props.className
-            )}
-            tabIndex={props.tabIndex}
-            onClick={props.onClick}
-            onKeyDown={handleKeyDown}
+const DeleteButton = props => (
+    <button
+        aria-label="Delete"
+        className={classNames(
+            styles.deleteButton,
+            props.className
+        )}
+        tabIndex={props.tabIndex}
+        onClick={props.onClick}
+    >
+        <div
+            className={classNames(styles.deleteButtonVisible, {
+                [styles.deleteButtonClicked]: props.isConfirmationModalOpened
+            })}
         >
-            <div
-                className={classNames(styles.deleteButtonVisible, {
-                    [styles.deleteButtonClicked]: props.isConfirmationModalOpened
-                })}
-            >
-                <img
-                    className={styles.deleteIcon}
-                    src={deleteIcon}
-                />
-            </div>
-        </button>
-    );
-
-};
+            <img
+                className={styles.deleteIcon}
+                src={deleteIcon}
+            />
+        </div>
+    </button>
+);
 
 DeleteButton.propTypes = {
     className: PropTypes.string,

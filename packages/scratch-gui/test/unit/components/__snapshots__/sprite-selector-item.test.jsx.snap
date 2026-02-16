@@ -1,10 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SpriteSelectorItemComponent does not have a close box when not selected 1`] = `
-<button
+<div
   aria-label="Pony sprite"
   class="ponies"
   data-state="closed"
+  role="button"
+  tabindex="0"
 >
   <div>
     <div>
@@ -19,14 +21,16 @@ exports[`SpriteSelectorItemComponent does not have a close box when not selected
       Pony sprite
     </div>
   </div>
-</button>
+</div>
 `;
 
 exports[`SpriteSelectorItemComponent matches snapshot when given a number and details to show 1`] = `
-<button
+<div
   aria-label="Pony sprite (480 x 360)"
   class="ponies undefined"
   data-state="closed"
+  role="button"
+  tabindex="0"
 >
   <div>
     5
@@ -60,14 +64,16 @@ exports[`SpriteSelectorItemComponent matches snapshot when given a number and de
       />
     </div>
   </button>
-</button>
+</div>
 `;
 
 exports[`SpriteSelectorItemComponent matches snapshot when selected 1`] = `
-<button
+<div
   aria-label="Pony sprite"
   class="ponies undefined"
   data-state="closed"
+  role="button"
+  tabindex="0"
 >
   <div>
     <div>
@@ -95,5 +101,5 @@ exports[`SpriteSelectorItemComponent matches snapshot when selected 1`] = `
       />
     </div>
   </button>
-</button>
+</div>
 `;
