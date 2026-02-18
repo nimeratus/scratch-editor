@@ -90,8 +90,11 @@ const ActionMenu = ({
     }, [itemRefs, focusItem]);
 
     const handleKeyDown = useCallback(e => {
-        if ((e.key === KEY.ARROW_DOWN || e.key === KEY.ARROW_UP) && isExpanded) {
+        if (e.key === KEY.ARROW_DOWN || e.key === KEY.ARROW_UP) {
             e.preventDefault();
+            if (!isExpanded) {
+                setIsExpanded(true);
+            }
             const direction = e.key === KEY.ARROW_UP ? -1 : 1;
             handleMove(direction);
         } else if (e.key === KEY.TAB || e.key === KEY.ESCAPE) {
