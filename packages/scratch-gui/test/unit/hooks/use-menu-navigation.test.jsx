@@ -1,5 +1,5 @@
 import {renderHook} from '@testing-library/react';
-import useMenuNavigation from '../../../src/hooks/use-menu-navigation.jsx';
+import useMenuNavigation from '../../../src/hooks/use-menu-navigation';
 import {MenuRefContext} from '../../../src/contexts/menu-ref-context';
 import {KEY} from '../../../src/lib/navigation-keys';
 import React from 'react';
