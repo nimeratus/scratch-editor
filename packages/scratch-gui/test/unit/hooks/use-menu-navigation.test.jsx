@@ -66,9 +66,9 @@ describe('useMenuNavigation', () => {
     test('skips over elements without data-menu-item or with data-menu-item="false"', () => {
         const wrapperDiv = document.createElement('div');
 
-        const itemWithFalse = document.createElement('button');
-        itemWithFalse.setAttribute('data-menu-item', 'false');
-        wrapperDiv.appendChild(itemWithFalse);
+        const itemWithFalseAttribute = document.createElement('button');
+        itemWithFalseAttribute.setAttribute('data-menu-item', 'false');
+        wrapperDiv.appendChild(itemWithFalseAttribute);
 
         const validItem = document.createElement('button');
         validItem.setAttribute('data-menu-item', 'true');
@@ -83,7 +83,7 @@ describe('useMenuNavigation', () => {
         result.current.menuRef.current = wrapperDiv;
 
         const validFocusSpy = jest.spyOn(validItem, 'focus');
-        const invalidFocusSpy = jest.spyOn(itemWithFalse, 'focus');
+        const invalidFocusSpy = jest.spyOn(itemWithFalseAttribute, 'focus');
 
         result.current.handleOnOpen();
         jest.runAllTimers();
