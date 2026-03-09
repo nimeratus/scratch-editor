@@ -144,6 +144,8 @@ const ActionMenu = ({
         onClickItem(e);
         document.activeElement.blur();
         focusItem(buttonRef.current);
+        // Timeout to refocus tooltip after some page component loads,
+        // happens with some menu items
         setTimeout(() => {
             document.activeElement.blur();
             focusItem(buttonRef.current);
