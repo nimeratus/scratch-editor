@@ -12,7 +12,7 @@ import arrowDownIcon from './icon--arrow-down.svg';
 import arrowUpIcon from './icon--arrow-up.svg';
 
 import styles from './confirmation-prompt.css';
-import useCalculatePopupPosition, {PopupAlign, PopupSide} from '../../hooks/calculatePopupPosition.js';
+import calculatePopupPosition, {PopupAlign, PopupSide} from '../../lib/calculatePopupPosition.js';
 
 const messages = defineMessages({
     defaultConfirmLabel: {
@@ -72,7 +72,7 @@ const ConfirmationPrompt = ({
 
     const updatePosition = useCallback(() => {
         if (relativeElementRef.current && modalRef.current) {
-            const pos = useCalculatePopupPosition({
+            const pos = calculatePopupPosition({
                 relativeElementRef,
                 popupRef: modalRef,
                 side,

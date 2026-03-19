@@ -1,7 +1,7 @@
 import React, {useRef, useEffect, useState, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import styles from './tooltip.css';
-import useCalculatePopupPosition, {PopupAlign, PopupSide} from '../../hooks/calculatePopupPosition';
+import calculatePopupPosition, {PopupAlign, PopupSide} from '../../lib/calculatePopupPosition';
 
 import arrowLeftIcon from './icon--arrow-left.svg';
 import arrowRightIcon from './icon--arrow-right.svg';
@@ -54,7 +54,7 @@ const Tooltip = ({
 
     const updatePosition = useCallback(() => {
         if (!targetRef?.current || !tooltipRef.current) return;
-        const newPos = useCalculatePopupPosition({
+        const newPos = calculatePopupPosition({
             relativeElementRef: targetRef,
             popupRef: tooltipRef,
             side,

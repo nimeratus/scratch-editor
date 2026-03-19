@@ -13,7 +13,7 @@ export const PopupAlign = {
     CENTER: 'center'
 };
 
-const useCalculatePopupPosition = ({
+const calculatePopupPosition = ({
     relativeElementRef,
     popupRef,
     side,
@@ -101,4 +101,4 @@ const useCalculatePopupPosition = ({
     return {top, left, arrowTop, arrowLeft};
 };
 
-export default useCalculatePopupPosition;
+export default calculatePopupPosition;
