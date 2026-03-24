@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import styles from './tooltip.css';
 import calculatePopupPosition, {PopupAlign, PopupSide} from '../../lib/calculatePopupPosition';
 
-import arrowLeftIcon from './icon--arrow-left.svg';
-import arrowRightIcon from './icon--arrow-right.svg';
 import arrowDownIcon from './icon--arrow-down.svg';
 import arrowUpIcon from './icon--arrow-up.svg';
+import arrowLeftIcon from './icon--arrow-left.svg';
+import arrowRightIcon from './icon--arrow-right.svg';
+
 import Box from '../box/box';
 
 const defaultConfig = {
@@ -14,8 +15,8 @@ const defaultConfig = {
     spaceForArrow: 12,
     arrowOffsetFromBottom: 2,
     counterOffset: 2,
-    arrowLongSide: 28,
-    arrowShortSide: 8
+    arrowWidth: 28,
+    arrowHeight: 8
 };
 
 const SIDE_TO_ARROW_ICON = {
@@ -35,22 +36,23 @@ const Tooltip = ({
     align,
     title,
     body,
-    config
+    layoutConfig
 }) => {
     const tooltipRef = useRef(null);
     const [pos, setPos] = useState({top: 0, left: 0, arrowTop: 0, arrowLeft: 0});
 
-    const arrowIcon = SIDE_TO_ARROW_ICON[side];
     const {
         width,
         spaceForArrow,
         counterOffset,
         arrowOffsetFromBottom,
-        arrowLongSide,
-        arrowShortSide
-    } = {...defaultConfig, ...config};
-    const [arrowHeight, arrowWidth] = (side === PopupSide.LEFT || side === PopupSide.RIGHT) ?
-        [arrowLongSide, arrowShortSide] : [arrowShortSide, arrowLongSide];
+        arrowHeight,
+        arrowWidth
+    } = {...defaultConfig, ...layoutConfig};
+
+    const arrowIcon = SIDE_TO_ARROW_ICON[side];
+    const [rotatedArrowWidth, rotatedArrowHeight] = (side === PopupSide.UP || side === PopupSide.DOWN) ?
+        [arrowWidth, arrowHeight] : [arrowHeight, arrowWidth];
 
     const updatePosition = useCallback(() => {
         if (!targetRef?.current || !tooltipRef.current) return;
@@ -60,15 +62,11 @@ const Tooltip = ({
             side,
             align,
             popupWidth: width,
-            arrowLeftIcon,
-            arrowRightIcon,
-            arrowUpIcon,
-            arrowDownIcon,
             spaceForArrow,
             counterOffset,
             arrowOffsetFromBottom,
-            arrowShortSide,
-            arrowLongSide
+            arrowHeight: rotatedArrowHeight,
+            arrowWidth: rotatedArrowWidth
         });
         setPos(newPos);
     }, [
@@ -79,10 +77,10 @@ const Tooltip = ({
         spaceForArrow,
         counterOffset,
         arrowOffsetFromBottom,
-        arrowLongSide,
-        arrowShortSide
+        rotatedArrowHeight,
+        rotatedArrowWidth
     ]);
-
+    
     // Resize/scroll listeners
     useEffect(() => {
         if (!isOpen) return;
@@ -124,7 +122,7 @@ const Tooltip = ({
         if (!target) return;
 
         const handleMouseEnter = () => {
-            if (onRequestOpen) onRequestOpen();
+            onRequestOpen?.();
         };
 
         const handleMouseLeave = () => {
@@ -150,7 +148,7 @@ const Tooltip = ({
             target.removeEventListener('focus', handleFocus);
             target.removeEventListener('blur', handleBlur);
         };
-    }, [isManualOnly, onRequestOpen, onRequestClose, targetRef, targetRef?.current]);
+    }, [isManualOnly, onRequestOpen, onRequestClose, targetRef?.current]);
 
     // Update position when isOpen changes
     useEffect(() => {
@@ -197,8 +195,8 @@ const Tooltip = ({
                     style={{
                         top: pos.arrowTop,
                         left: pos.arrowLeft,
-                        width: arrowWidth,
-                        height: arrowHeight,
+                        width: rotatedArrowWidth,
+                        height: rotatedArrowHeight,
                         zIndex: 510,
                         position: 'fixed'
                     }}
@@ -220,13 +218,13 @@ Tooltip.propTypes = {
     align: PropTypes.oneOf(Object.values(PopupAlign)),
     title: PropTypes.node,
     body: PropTypes.node.isRequired,
-    config: PropTypes.shape({
+    layoutConfig: PropTypes.shape({
         width: PropTypes.number,
         spaceForArrow: PropTypes.number,
         arrowOffsetFromBottom: PropTypes.number,
         counterOffset: PropTypes.number,
-        arrowShortSide: PropTypes.number,
-        arrowLongSide: PropTypes.number
+        arrowHeight: PropTypes.number,
+        arrowWidth: PropTypes.number
     })
 };
 

@@ -20,8 +20,8 @@ const calculatePopupPosition = ({
     align = PopupAlign.CENTER,
     popupWidth,
     spaceForArrow,
-    arrowShortSide,
-    arrowLongSide,
+    arrowHeight,
+    arrowWidth,
     counterOffset = 5,
     arrowOffsetFromBottom = 0
 }) => {
@@ -30,8 +30,6 @@ const calculatePopupPosition = ({
     if (!el || !modalEl) return {};
 
     const modalHeight = popupRef.current.getBoundingClientRect().height;
-    const [arrowHeight, arrowWidth] = (side === PopupSide.LEFT || side === PopupSide.RIGHT) ?
-        [arrowLongSide, arrowShortSide] : [arrowShortSide, arrowLongSide];
     const buttonRect = el.getBoundingClientRect();
 
     let top = 0;
@@ -90,6 +88,7 @@ const calculatePopupPosition = ({
         break;
     case PopupSide.LEFT:
         arrowTop = buttonRect.top + ((buttonRect.height - arrowHeight) / 2);
+        console.log(buttonRect.left, spaceForArrow, arrowOffsetFromBottom);
         arrowLeft = buttonRect.left - spaceForArrow - arrowOffsetFromBottom;
         break;
     case PopupSide.RIGHT:

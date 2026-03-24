@@ -24,6 +24,7 @@ import thumbnailIcon from './icon--thumbnail.svg';
 import ConfirmationPrompt from '../confirmation-prompt/confirmation-prompt.jsx';
 import Tooltip from '../tooltip/tooltip.jsx';
 import classNames from 'classnames';
+import {PopupAlign, PopupSide} from '../../lib/calculatePopupPosition.js';
 
 const messages = defineMessages({
     largeStageSizeMessage: {
@@ -99,7 +100,6 @@ const StageHeaderComponent = function (props) {
 
     let header = null;
 
-    const thumbnailTooltipId = 'thumbnail-tooltip';
     const thumbnailButtonRef = useRef(null);
 
     const [isThumbnailPromptOpen, setIsThumbnailPromptOpen] = useState(false);
@@ -218,26 +218,24 @@ const StageHeaderComponent = function (props) {
             isPlayerOnly ? (
                 []
             ) : (
-                <div className={styles.stageSizeToggleGroup}>
-                    <ToggleButtons
-                        buttons={[
-                            {
-                                handleClick: onSetStageSmall,
-                                icon: smallStageIcon,
-                                iconClassName: styles.stageButtonIcon,
-                                isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
-                                title: intl.formatMessage(messages.smallStageSizeMessage)
-                            },
-                            {
-                                handleClick: onSetStageLarge,
-                                icon: largeStageIcon,
-                                iconClassName: styles.stageButtonIcon,
-                                isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
-                                title: intl.formatMessage(messages.largeStageSizeMessage)
-                            }
-                        ]}
-                    />
-                </div>
+                <ToggleButtons
+                    buttons={[
+                        {
+                            handleClick: onSetStageSmall,
+                            icon: smallStageIcon,
+                            iconClassName: styles.stageButtonIcon,
+                            isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
+                            title: intl.formatMessage(messages.smallStageSizeMessage)
+                        },
+                        {
+                            handleClick: onSetStageLarge,
+                            icon: largeStageIcon,
+                            iconClassName: styles.stageButtonIcon,
+                            isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
+                            title: intl.formatMessage(messages.largeStageSizeMessage)
+                        }
+                    ]}
+                />
             );
         header = (
             <Box className={styles.stageHeaderWrapper}>
@@ -250,9 +248,9 @@ const StageHeaderComponent = function (props) {
                             onRequestOpen={onOpenTooltip}
                             onRequestClose={onCloseTooltip}
                             targetRef={thumbnailButtonRef}
-                            side="left"
-                            align="down"
-                            config={{width: 336}}
+                            side={PopupSide.LEFT}
+                            align={PopupAlign.DOWN}
+                            layoutConfig={{width: 336}}
                             title={intl.formatMessage(messages.thumbnailTooltipTitle)}
                             body={
                                 <FormattedMessage
@@ -273,8 +271,6 @@ const StageHeaderComponent = function (props) {
                                 onClick={onThumbnailPromptOpen}
                                 disabled={isUpdatingThumbnail}
                                 componentRef={thumbnailButtonRef}
-                                data-tip={intl.formatMessage(messages.setThumbnail)}
-                                data-for={thumbnailTooltipId}
                             >
                                 <img
                                     src={thumbnailIcon}
@@ -290,8 +286,8 @@ const StageHeaderComponent = function (props) {
                             onConfirm={onUpdateThumbnailAndClose}
                             onCancel={onThumbnailPromptClose}
                             relativeElementRef={thumbnailButtonRef}
-                            side="down"
-                            align="left"
+                            side={PopupSide.DOWN}
+                            align={PopupAlign.LEFT}
                         />
                         {stageControls}
                         <div className={styles.rightSection}>

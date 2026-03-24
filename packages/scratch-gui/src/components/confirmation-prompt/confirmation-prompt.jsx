@@ -6,10 +6,10 @@ import {defineMessages, FormattedMessage} from 'react-intl';
 
 import Box from '../box/box.jsx';
 
-import arrowLeftIcon from './icon--arrow-left.svg';
-import arrowRightIcon from './icon--arrow-right.svg';
 import arrowDownIcon from './icon--arrow-down.svg';
 import arrowUpIcon from './icon--arrow-up.svg';
+import arrowLeftIcon from './icon--arrow-left.svg';
+import arrowRightIcon from './icon--arrow-right.svg';
 
 import styles from './confirmation-prompt.css';
 import calculatePopupPosition, {PopupAlign, PopupSide} from '../../lib/calculatePopupPosition.js';
@@ -31,8 +31,8 @@ const defaultConfig = {
     modalWidth: 200,
     spaceForArrow: 16,
     counterOffset: 7,
-    arrowLongSide: 29,
-    arrowShortSide: 13
+    arrowWidth: 29,
+    arrowHeight: 13
 };
 
 const SIDE_TO_ARROW_ICON = {
@@ -53,21 +53,22 @@ const ConfirmationPrompt = ({
     relativeElementRef,
     side,
     align,
-    config
+    layoutConfig
 }) => {
     const {
         modalWidth,
         spaceForArrow,
         counterOffset,
-        arrowLongSide,
-        arrowShortSide
-    } = {...defaultConfig, ...config};
-    const arrowIcon = SIDE_TO_ARROW_ICON[side];
+        arrowHeight,
+        arrowWidth
+    } = {...defaultConfig, ...layoutConfig};
 
     const modalRef = useRef(null);
     const [modalPositionValues, setModalPositionValues] = React.useState({});
-    const [arrowHeight, arrowWidth] = (side === PopupSide.LEFT || side === PopupSide.RIGHT) ?
-        [arrowLongSide, arrowShortSide] : [arrowShortSide, arrowLongSide];
+
+    const arrowIcon = SIDE_TO_ARROW_ICON[side];
+    const [rotatedArrowWidth, rotatedArrowHeight] = (side === PopupSide.UP || side === PopupSide.DOWN) ?
+        [arrowWidth, arrowHeight] : [arrowHeight, arrowWidth];
 
     const updatePosition = useCallback(() => {
         if (relativeElementRef.current && modalRef.current) {
@@ -77,14 +78,10 @@ const ConfirmationPrompt = ({
                 side,
                 align,
                 popupWidth: modalWidth,
-                arrowLeftIcon,
-                arrowRightIcon,
-                arrowUpIcon,
-                arrowDownIcon,
                 spaceForArrow,
                 counterOffset,
-                arrowShortSide,
-                arrowLongSide
+                arrowHeight: rotatedArrowHeight,
+                arrowWidth: rotatedArrowWidth
             });
             setModalPositionValues(pos);
         }
@@ -95,8 +92,8 @@ const ConfirmationPrompt = ({
         modalWidth,
         spaceForArrow,
         counterOffset,
-        arrowShortSide,
-        arrowLongSide
+        rotatedArrowHeight,
+        rotatedArrowWidth
     ]);
 
     useEffect(() => {
@@ -206,12 +203,12 @@ ConfirmationPrompt.propTypes = {
     relativeElementRef: PropTypes.shape({current: PropTypes.instanceOf(Element)}),
     side: PropTypes.oneOf(Object.values(PopupSide)).isRequired,
     align: PropTypes.oneOf(Object.values(PopupAlign)),
-    config: PropTypes.shape({
+    layoutConfig: PropTypes.shape({
         modalWidth: PropTypes.number,
         spaceForArrow: PropTypes.number,
         counterOffset: PropTypes.number,
-        arrowLongSide: PropTypes.number,
-        arrowShortSide: PropTypes.number
+        arrowHeight: PropTypes.number,
+        arrowWidth: PropTypes.number
     })
 };
 
