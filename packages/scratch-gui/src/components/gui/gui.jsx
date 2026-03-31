@@ -260,11 +260,6 @@ const GUIComponent = props => {
                 isRendererSupported={isRendererSupported}
                 isRtl={isRtl}
                 loading={loading}
-                manuallySaveThumbnails={
-                    manuallySaveThumbnails &&
-                    userOwnsProject
-                }
-                onUpdateProjectThumbnail={onUpdateProjectThumbnail}
                 stageSize={STAGE_SIZE_MODES.large}
                 vm={vm}
             >
@@ -546,6 +541,9 @@ const GUIComponent = props => {
                                 vm={vm}
                                 ariaRole="region"
                                 ariaLabel={intl.formatMessage(ariaMessages.stage)}
+                                manuallySaveThumbnails={manuallySaveThumbnails}
+                                userOwnsProject={userOwnsProject}
+                                onUpdateProjectThumbnail={onUpdateProjectThumbnail}
                             />
                             <Box
                                 className={styles.targetWrapper}

@@ -1,7 +1,6 @@
-import {FormattedMessage, defineMessages, useIntl} from 'react-intl';
+import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 import PropTypes from 'prop-types';
-import React, {useCallback} from 'react';
-import {connect} from 'react-redux';
+import React, {useCallback, useRef, useState} from 'react';
 import VM from '@scratch/scratch-vm';
 
 import Box from '../box/box.jsx';
@@ -21,6 +20,11 @@ import styles from './stage-header.css';
 import {storeProjectThumbnail} from '../../lib/store-project-thumbnail.js';
 import dataURItoBlob from '../../lib/data-uri-to-blob.js';
 import throttle from 'lodash.throttle';
+import thumbnailIcon from './icon--thumbnail.svg';
+import ConfirmationPrompt from '../confirmation-prompt/confirmation-prompt.jsx';
+import FeatureCalloutPopover from '../feature-callout-popover/feature-callout-popover.jsx';
+import classNames from 'classnames';
+import {PopupAlign, PopupSide} from '../../lib/calculatePopupPosition.js';
 
 const messages = defineMessages({
     largeStageSizeMessage: {
@@ -48,6 +52,22 @@ const messages = defineMessages({
         description: 'Manually save project thumbnail',
         id: 'gui.stageHeader.saveThumbnail'
     },
+    setThumbnailMessage: {
+        defaultMessage: 'Are you sure you want to set your thumbnail?',
+        description: 'Confirmation message for manually saving project thumbnail',
+        id: 'gui.stageHeader.saveThumbnailMessage'
+    },
+    thumbnailTooltipTitle: {
+        defaultMessage: 'Hey there! 👋',
+        description: 'Title for the thumbnail tooltip',
+        id: 'gui.stageHeader.thumbnailTooltipTitle'
+    },
+    thumbnailTooltipBody: {
+        defaultMessage: 'The <b>"Set Thumbnail"</b> has a new spot. The way it works is by ' +
+            'taking a snapshot of your canvas and setting it as your project thumbnail.',
+        description: 'Body text for the thumbnail tooltip',
+        id: 'gui.stageHeader.thumbnailTooltipBody'
+    },
     fullscreenControl: {
         defaultMessage: 'Full Screen Control',
         description: 'Button to enter/exit full screen mode',
@@ -69,27 +89,75 @@ const StageHeaderComponent = function (props) {
         projectId,
         showBranding,
         stageSizeMode,
-        vm
+        vm,
+        isProjectLoaded,
+        userOwnsProject,
+        onShowSettingThumbnail,
+        onShowThumbnailSuccess,
+        onShowThumbnailError
     } = props;
     const intl = useIntl();
 
     let header = null;
 
-    const onUpdateThumbnail = useCallback(
-        throttle(
-            () => {
-                if (!onUpdateProjectThumbnail) {
-                    return;
-                }
+    const thumbnailButtonRef = useRef(null);
 
-                storeProjectThumbnail(vm, dataURI => {
-                    onUpdateProjectThumbnail(projectId, dataURItoBlob(dataURI));
-                });
-            },
-            3000
-        ),
-        [projectId, onUpdateProjectThumbnail]
+    const [isThumbnailPromptOpen, setIsThumbnailPromptOpen] = useState(false);
+    const [isThumbnailTooltipOpen, setIsThumbnailTooltipOpen] = useState(false);
+    const [isUpdatingThumbnail, setIsUpdatingThumbnail] = useState(false);
+
+    const onUpdateThumbnail = useCallback(
+        throttle(() => {
+            if (!onUpdateProjectThumbnail) return;
+
+            setIsUpdatingThumbnail(true);
+            onShowSettingThumbnail();
+
+            storeProjectThumbnail(vm, dataURI => {
+                onUpdateProjectThumbnail(
+                    projectId,
+                    dataURItoBlob(dataURI),
+                    () => {
+                        onShowThumbnailSuccess();
+                        setIsUpdatingThumbnail(false);
+                    },
+                    () => {
+                        onShowThumbnailError();
+                        setIsUpdatingThumbnail(false);
+                    }
+                );
+            });
+        }, 3000),
+        [
+            onUpdateProjectThumbnail,
+            projectId,
+            vm,
+            onShowSettingThumbnail,
+            onShowThumbnailSuccess,
+            onShowThumbnailError
+        ]
     );
+
+    const onThumbnailPromptOpen = useCallback(() => {
+        setIsThumbnailPromptOpen(true);
+    }, []);
+
+    const onThumbnailPromptClose = useCallback(() => {
+        setIsThumbnailPromptOpen(false);
+    }, []);
+
+    const onUpdateThumbnailAndClose = useCallback(() => {
+        onThumbnailPromptClose();
+        onUpdateThumbnail();
+    }, [onUpdateThumbnail]);
+
+    const onOpenTooltip = useCallback(() => {
+        setIsThumbnailTooltipOpen(true);
+    }, []);
+
+    const onCloseTooltip = useCallback(() => {
+        setIsThumbnailTooltipOpen(false);
+    }, []);
 
     if (isFullScreen) {
         const stageDimensions = getStageDimensions(null, true);
@@ -139,43 +207,77 @@ const StageHeaderComponent = function (props) {
             isPlayerOnly ? (
                 []
             ) : (
-                <div className={styles.stageSizeToggleGroup}>
-                    <ToggleButtons
-                        buttons={[
-                            {
-                                handleClick: onSetStageSmall,
-                                icon: smallStageIcon,
-                                iconClassName: styles.stageButtonIcon,
-                                isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
-                                title: intl.formatMessage(messages.smallStageSizeMessage)
-                            },
-                            {
-                                handleClick: onSetStageLarge,
-                                icon: largeStageIcon,
-                                iconClassName: styles.stageButtonIcon,
-                                isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
-                                title: intl.formatMessage(messages.largeStageSizeMessage)
-                            }
-                        ]}
-                    />
-                </div>
+                <ToggleButtons
+                    buttons={[
+                        {
+                            handleClick: onSetStageSmall,
+                            icon: smallStageIcon,
+                            iconClassName: styles.stageButtonIcon,
+                            isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
+                            title: intl.formatMessage(messages.smallStageSizeMessage)
+                        },
+                        {
+                            handleClick: onSetStageLarge,
+                            icon: largeStageIcon,
+                            iconClassName: styles.stageButtonIcon,
+                            isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
+                            title: intl.formatMessage(messages.largeStageSizeMessage)
+                        }
+                    ]}
+                />
             );
         header = (
             <Box className={styles.stageHeaderWrapper}>
                 <Box className={styles.stageMenuWrapper}>
                     <Controls vm={vm} />
                     <div className={styles.stageSizeRow}>
+                        {/* To remove - new feature awareness tooltip */}
+                        <FeatureCalloutPopover
+                            isOpen={isThumbnailTooltipOpen}
+                            onRequestClose={onCloseTooltip}
+                            targetRef={thumbnailButtonRef}
+                            side={PopupSide.LEFT}
+                            align={PopupAlign.DOWN}
+                            title={intl.formatMessage(messages.thumbnailTooltipTitle)}
+                            body={
+                                <FormattedMessage
+                                    {...messages.thumbnailTooltipBody}
+                                    values={{
+                                        b: chunks => <b>{chunks}</b>
+                                    }}
+                                />
+                            }
+                        />
+                        {manuallySaveThumbnails && isProjectLoaded && userOwnsProject && (
+                            <Button
+                                title={intl.formatMessage(messages.setThumbnail)}
+                                className={classNames(
+                                    styles.stageButton,
+                                    {[styles.stageButtonHighlighted]: isThumbnailTooltipOpen}
+                                )}
+                                onClick={onThumbnailPromptOpen}
+                                disabled={isUpdatingThumbnail}
+                                componentRef={thumbnailButtonRef}
+                            >
+                                <img
+                                    src={thumbnailIcon}
+                                    alt={intl.formatMessage(messages.setThumbnail)}
+                                    className={styles.stageButtonIcon}
+                                />
+                            </Button>
+                        )}
+                        <ConfirmationPrompt
+                            isOpen={isThumbnailPromptOpen}
+                            title={intl.formatMessage(messages.setThumbnail)}
+                            message={intl.formatMessage(messages.setThumbnailMessage)}
+                            confirmButtonConfig={{onClick: onUpdateThumbnailAndClose}}
+                            cancelButtonConfig={{onClick: onThumbnailPromptClose}}
+                            relativeElementRef={thumbnailButtonRef}
+                            side={PopupSide.DOWN}
+                            align={PopupAlign.LEFT}
+                        />
                         {stageControls}
                         <div className={styles.rightSection}>
-                            {manuallySaveThumbnails && (
-                                <Button
-                                    aria-label={intl.formatMessage(messages.setThumbnail)}
-                                    className={styles.setThumbnailButton}
-                                    onClick={onUpdateThumbnail}
-                                >
-                                    <FormattedMessage {...messages.setThumbnail} />
-                                </Button>
-                            )}
                             <Button
                                 className={styles.stageButton}
                                 onClick={onSetStageFull}
@@ -198,12 +300,6 @@ const StageHeaderComponent = function (props) {
     return header;
 };
 
-const mapStateToProps = state => ({
-    projectId: state.scratchGui.projectState.projectId,
-    // This is the button's mode, as opposed to the actual current state
-    stageSizeMode: state.scratchGui.stageSize.stageSize
-});
-
 StageHeaderComponent.propTypes = {
     isFullScreen: PropTypes.bool.isRequired,
     isPlayerOnly: PropTypes.bool.isRequired,
@@ -217,11 +313,17 @@ StageHeaderComponent.propTypes = {
     projectId: PropTypes.number.isRequired,
     showBranding: PropTypes.bool.isRequired,
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    isProjectLoaded: PropTypes.bool,
+    userOwnsProject: PropTypes.bool,
+    onShowSettingThumbnail: PropTypes.func,
+    onShowThumbnailError: PropTypes.func,
+    onShowThumbnailSuccess: PropTypes.func
 };
 
 StageHeaderComponent.defaultProps = {
-    stageSizeMode: STAGE_SIZE_MODES.large
+    stageSizeMode: STAGE_SIZE_MODES.large,
+    userOwnsProject: false
 };
 
-export default connect(mapStateToProps)(StageHeaderComponent);
+export default StageHeaderComponent;
