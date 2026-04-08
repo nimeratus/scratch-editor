@@ -90,9 +90,9 @@ jobs:
     if: ${{ !cancelled() && needs.build.result == 'success' && needs.test.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # to push the version commit and tag
-      issues: write  # to comment on issues when a fix is released
-      pull-requests: write  # to comment on PRs when a fix is released
+      contents: write # to push the version commit and tag
+      issues: write # to comment on issues when a fix is released
+      pull-requests: write # to comment on PRs when a fix is released
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
