@@ -99,6 +99,20 @@ class VideoStep extends React.Component {
         script2.async = true;
         script2.setAttribute('id', 'wistia-video-api');
         document.body.appendChild(script2);
+
+        // The Wistia API doesn't provide a callback for when the video is ready,
+        // so we use the global _wq queue that Wistia provides for this purpose.
+        // See the below above for more details.
+        // https://docs.wistia.com/docs/javascript-player-api#with-standard-embeds
+        window._wq = window._wq || [];
+        window._wq.push({
+            id: this.props.video,
+            onReady: video => {
+                if (video) {
+                    video.focus();
+                }
+            }});
+
     }
 
     // We use the Wistia API here to update or pause the video dynamically:
@@ -136,7 +150,6 @@ class VideoStep extends React.Component {
                     className={`wistia_embed wistia_async_${this.props.video}`}
                     id="video-div"
                     style={{height: `257px`, width: `466px`}}
-                    ref={this.props.videoRef}
                 >
                     &nbsp;
                 </div>
@@ -147,8 +160,7 @@ class VideoStep extends React.Component {
 
 VideoStep.propTypes = {
     expanded: PropTypes.bool.isRequired,
-    video: PropTypes.string.isRequired,
-    videoRef: PropTypes.shape({current: PropTypes.instanceOf(Element)})
+    video: PropTypes.string.isRequired
 };
 
 const ImageStep = ({title, image}) => (<Fragment>
@@ -356,28 +368,6 @@ const Cards = props => {
 
     if (activeDeckId === null) return;
 
-    const videoRef = useRef(null);
-
-    useEffect(() => {
-        // Only focus in the presence of a video on the card
-        const steps = content[activeDeckId]?.steps;
-        const isTutorialStep = steps?.[step]?.video;
-
-        if (isTutorialStep) {
-            // Need the custom focus delay because of the conflict between this logic
-            // and refocusing the button that opened the library (tutorials in this case)
-            const FOCUS_DELAY = 500;
-
-            const focusVideo = () => {
-                const target = videoRef.current &&
-                    videoRef.current.querySelector('.w-big-play-button');
-                if (target) target.focus();
-            };
-            requestAnimationFrame(focusVideo);
-            setTimeout(focusVideo, FOCUS_DELAY);
-        }
-    }, [activeDeckId, step, content]);
-
     // Tutorial cards need to calculate their own dragging bounds
     // to allow for dragging the cards off the left, right and bottom
     // edges of the workspace.
@@ -450,7 +440,6 @@ const Cards = props => {
                                                     dragging={dragging}
                                                     expanded={expanded}
                                                     video={translateVideo(steps[step].video, locale)}
-                                                    videoRef={videoRef}
                                                 />
                                             ) : (
                                                 <ImageStep
