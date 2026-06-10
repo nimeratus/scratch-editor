@@ -25,6 +25,7 @@ type RequestFnResult = null | undefined | string | ScratchGetRequest | ScratchSe
 /**
  * Ensure that the provided request configuration is in object form, converting from
  * string if necessary.
+ * @param reqConfig
  */
 const ensureRequestConfig = async (
     reqConfig: RequestFnResult | Promise<RequestFnResult>

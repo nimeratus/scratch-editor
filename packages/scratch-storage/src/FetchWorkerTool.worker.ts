@@ -1,5 +1,5 @@
 /* eslint-env worker */
-/* eslint-disable-next-line spaced-comment */
+ 
 /// <reference lib="webworker" />
 
 // This worker won't share the same queue as the main thread, but throttling should be okay

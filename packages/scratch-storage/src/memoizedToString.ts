@@ -1,11 +1,11 @@
 import {AssetId} from './Asset';
 
-declare function require(name: 'fastestsmallesttextencoderdecoder'): {
+declare function require (name: 'fastestsmallesttextencoderdecoder'): {
     TextEncoder: typeof TextEncoder,
     TextDecoder: typeof TextDecoder
 };
 
-declare function require(name: 'base64-js'): {
+declare function require (name: 'base64-js'): {
     fromByteArray: (data: Uint8Array) => string;
 };
 
